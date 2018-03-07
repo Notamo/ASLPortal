@@ -7,9 +7,6 @@ public class PlayerController : MonoBehaviour {
     public float movementSpeed = 10.0f;
     public float rotateSpeed = 10.0f;
 
-    public float Xangle = 0.0f;
-    public float Yangle = 0.0f;
-
     public Camera playerCamera = null;
     public MyWorld myWorld = null;
 
