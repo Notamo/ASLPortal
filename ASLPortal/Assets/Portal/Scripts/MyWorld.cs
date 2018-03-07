@@ -5,19 +5,25 @@ using UnityEngine;
 using ASL.Manipulation.Objects;
 
 public class MyWorld : MonoBehaviour {
+    public bool MasterClient = false;
 
-    public WorldManager worldMgr = null;
     public PortalManager portalMgr = null;
     public Camera mainCamera = null;
 
-    bool portalMade = false;
-    bool worldMade = false;
-    bool pairMade = false;
+    private GameObject Avatar = null;
+    public string AvatarName = "MasterAvatar";
+    public Vector3 SpawnPos = new Vector3(0, 1, 0);
+
+    public string PlaneName = "GreenPlane";
+
+    private bool portalMade = false;
+    private bool worldMade = false;
+    private bool avatarMade = false;
+    private bool pairMade = false;
     private ObjectInteractionManager objManager;
 
 	// Use this for initialization
 	void Awake () {
-        Debug.Assert(worldMgr != null);
         Debug.Assert(portalMgr != null);
         Debug.Assert(mainCamera != null);
 
@@ -32,7 +38,16 @@ public class MyWorld : MonoBehaviour {
     // Update is called once per frame
     void Update () {
 
-        if (Input.GetKeyDown(KeyCode.L))
+        if(Input.GetKeyDown(KeyCode.M))
+        {
+            if(!avatarMade && PhotonNetwork.inRoom)
+            {
+                MakeAvatar();
+                avatarMade = true;
+            }
+        }
+        //only the master Client can make the world resources
+        if (Input.GetKeyDown(KeyCode.L) && MasterClient)
         {
             if (!worldMade && PhotonNetwork.inRoom)  //maybe we can trigger this instead
             {
@@ -41,13 +56,13 @@ public class MyWorld : MonoBehaviour {
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.P) && !portalMade)
+       /* if (Input.GetKeyDown(KeyCode.P) && !portalMade)
         {
             portalMgr.EstablishNewPortal(transform);
             portalMade = true;
-        }
+        }*/
 
-        if(Input.GetKeyDown(KeyCode.O) && !pairMade)
+        /*if(Input.GetKeyDown(KeyCode.O) && !pairMade)
         {
             Debug.Log(PhotonNetwork.player.ID);
             Portal portal1 = portalMgr.MakeSoloPortal(new Vector3(-2, 1, 10), PhotonNetwork.player.ID);
@@ -55,31 +70,18 @@ public class MyWorld : MonoBehaviour {
 
             portalMgr.LinkPortalPair(portal1, portal2);
             pairMade = true;
-        }
+        }*/
 
         //
 	}
 
     private void MakeWorld()
     {
-        Debug.Log("Making World");
-        worldMgr.AddWorld(PhotonNetwork.player.ID, gameObject);
-
-        //make the user avatar/camera
-        GameObject user = objManager.InstantiateOwnedObject("UserAvatar");
-        user.name = "MyAvatar";
-        user.transform.SetParent(transform);
-        user.transform.localPosition = new Vector3(0, 1, -2);
-        mainCamera.transform.SetParent(user.transform);
-        mainCamera.transform.localPosition = .5f * user.transform.up;
-        PlayerController pc = user.AddComponent<PlayerController>() as PlayerController;
-        
-        
 
         //some reference objects
-        GameObject g = objManager.InstantiateOwnedObject("GreenPlane");
-        g.transform.SetParent(transform);
-        g.transform.localPosition = Vector3.zero;
+        GameObject plane = objManager.InstantiateOwnedObject(PlaneName);
+        plane.transform.SetParent(transform);
+        plane.transform.localPosition = Vector3.zero;
 
         GameObject reference = objManager.InstantiateOwnedObject("Cube");
         reference.transform.SetParent(transform);
@@ -89,8 +91,19 @@ public class MyWorld : MonoBehaviour {
         int myID = PhotonNetwork.player.ID;
         List<int> IDsToAdd = new List<int>();
         IDsToAdd.Add(myID);
-        nm.WhiteListOwnership(g, IDsToAdd);
+        nm.WhiteListOwnership(plane, IDsToAdd);
+    }
 
-        worldMgr.SetVisibleWorld(PhotonNetwork.player.ID);
+    private void MakeAvatar()
+    {
+        //make the user avatar/camera
+        Avatar = objManager.InstantiateOwnedObject("UserAvatar");
+        Avatar.name = AvatarName;
+        Avatar.transform.localPosition = SpawnPos;
+        mainCamera.transform.SetParent(Avatar.transform);
+        mainCamera.transform.localPosition = .5f * Avatar.transform.up;
+
+        //add the player controller after so other players can't manipulate this
+        PlayerController pc = Avatar.AddComponent<PlayerController>() as PlayerController;
     }
 }

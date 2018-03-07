@@ -10,7 +10,7 @@ public class PortalDestination : MonoBehaviour {
     private void Start()
     {
         //alert portal manager
-        GameObject.Find("PortalManager").GetComponent<PortalManager>().ReceiveNewPortal(this);
+        //GameObject.Find("PortalManager").GetComponent<PortalManager>().ReceiveNewPortal(this);
     }
 	
 	// Update is called once per frame

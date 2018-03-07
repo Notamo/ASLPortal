@@ -8,7 +8,8 @@ public class PortalManager : MonoBehaviour
 {
 
     private ObjectInteractionManager objManager;
-    public WorldManager worldMgr = null;
+
+    public bool MasterClient = true;
     public Camera mainCamera = null;
     public GameObject portalSourcePrefab = null;
 
@@ -18,22 +19,63 @@ public class PortalManager : MonoBehaviour
     // Use this for initialization
     void Awake()
     {
-        Debug.Assert(worldMgr != null);
         Debug.Assert(mainCamera != null);
         Debug.Assert(portalSourcePrefab != null);
         objManager = GameObject.Find("ObjectInteractionManager").GetComponent<ObjectInteractionManager>();
 
         //Should I use the OnEvent in ObjectManager?
-        PhotonNetwork.OnEventCall += OnEvent;
+        //PhotonNetwork.OnEventCall += OnEvent;
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        //
     }
 
+
+    /*
+     * Instantiate and initialize the Portal Prefabs
+     */
+    public void MakePortal()
+    {
+
+    }
+
+    /*
+     * Portal System Action Requests
+     * (Pre-Master Client Verification)
+     */ 
+    public void RequestRegisterPortal()
+    {
+
+    }
+
+    /*
+     * Portal System Actions
+     * (Post-Master Client Verification)
+     * --Only Called from OnEvent
+     */
+    private void RegisterPortal()
+    {
+
+    }
+
+    private void UnregisterPortal()
+    {
+
+    }
+
+    private void LinkPortal(Portal source, Portal destination)
+    {
+
+    }
+
+    private void UnlinkPortal(Portal source)
+    {
+
+    }
+
+    /*
     //Establish a new Portal as a destination
     public void EstablishNewPortal(Transform location)
     {
@@ -59,10 +101,10 @@ public class PortalManager : MonoBehaviour
         Debug.Log("RAISING EVENTS");
         RaiseEventOptions options = new RaiseEventOptions();
         options.Receivers = ReceiverGroup.All;
-        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_REGISTER_PORTAL, 1, true, options);
-        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_UNREGISTER_PORTAL, 2, true, options);
-        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_LINK_PORTALS, 3, true, options);
-        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_UNLINK_PORTALS, 4, true, options);
+        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_PORTAL_REG, 1, true, options);
+        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_PORTAL_UNREG, 2, true, options);
+        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_PORTAL_LINK, 3, true, options);
+        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_PORTAL_UNLINK, 4, true, options);
 
         //ReceiveNewPortal(pd, true);
     }
@@ -135,16 +177,16 @@ public class PortalManager : MonoBehaviour
         //handle events specifically related to portal stuff
         switch(eventCode)
         {
-            case UWBNetworkingPackage.ASLEventCode.EV_REGISTER_PORTAL:
+            case UWBNetworkingPackage.ASLEventCode.EV_PORTAL_REG:
                 Debug.Log("EV_REG: " + (int)content);
                 break;
-            case UWBNetworkingPackage.ASLEventCode.EV_UNREGISTER_PORTAL:
+            case UWBNetworkingPackage.ASLEventCode.EV_PORTAL_UNREG:
                 Debug.Log("EV_UNREG: " + (int)content);
                 break;
-            case UWBNetworkingPackage.ASLEventCode.EV_LINK_PORTALS:
+            case UWBNetworkingPackage.ASLEventCode.EV_PORTAL_LINK:
                 Debug.Log("EV_LINK: " + (int)content);
                 break;
-            case UWBNetworkingPackage.ASLEventCode.EV_UNLINK_PORTALS:
+            case UWBNetworkingPackage.ASLEventCode.EV_PORTAL_UNLINK:
                 Debug.Log("EV_UNLINK: " + (int)content);
                 break;
         }
@@ -183,4 +225,5 @@ public class PortalManager : MonoBehaviour
     {
 
     }
+    */
 }

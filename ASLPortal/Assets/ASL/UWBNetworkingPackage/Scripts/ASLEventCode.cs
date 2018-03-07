@@ -12,9 +12,15 @@ namespace UWBNetworkingPackage
         public const byte EV_JOIN = 55;
         public const byte EV_SYNC_OBJECT_OWNERSHIP_RESTRICTION = 96;
 
-        public const byte EV_REGISTER_PORTAL = 40;
-        public const byte EV_UNREGISTER_PORTAL = 41;
-        public const byte EV_LINK_PORTALS = 42;
-        public const byte EV_UNLINK_PORTALS = 43;
+        public const byte EV_WORLD_MADE = 30;
+        //Portal Events
+        public const byte EV_PORTAL_REG = 40;
+        public const byte EV_PORTAL_UNREG = 41;
+        public const byte EV_PORTAL_LINK = 42;
+        public const byte EV_PORTAL_UNLINK = 43;
+
+        //Portal Event Master Client Responses
+        public const byte EV_PORTAL_ACK = 44;
+        public const byte EV_PORTAL_NCK = 45;
     }
 }
