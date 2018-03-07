@@ -80,11 +80,11 @@ public class MyWorld : MonoBehaviour {
 
         //some reference objects
         GameObject plane = objManager.InstantiateOwnedObject(PlaneName);
-        plane.transform.SetParent(transform);
+        //plane.transform.SetParent(transform);
         plane.transform.localPosition = Vector3.zero;
 
         GameObject reference = objManager.InstantiateOwnedObject("Cube");
-        reference.transform.SetParent(transform);
+        //reference.transform.SetParent(transform);
         reference.transform.localPosition = new Vector3(0, 0.5f, 0);
 
         UWBNetworkingPackage.NetworkManager nm = GameObject.Find("NetworkManager").GetComponent<UWBNetworkingPackage.NetworkManager>();
@@ -97,7 +97,7 @@ public class MyWorld : MonoBehaviour {
     private void MakeAvatar()
     {
         //make the user avatar/camera
-        Avatar = objManager.InstantiateOwnedObject("UserAvatar");
+        Avatar = objManager.InstantiateOwnedObject("UserAvatar") as GameObject;
         Avatar.name = AvatarName;
         Avatar.transform.localPosition = SpawnPos;
         mainCamera.transform.SetParent(Avatar.transform);

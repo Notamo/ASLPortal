@@ -16,7 +16,7 @@ namespace ASL.Manipulation.Controllers.PC
 
         public void Update()
         {
-            if (Input.GetMouseButtonDown(0))
+          /*  if (Input.GetMouseButtonDown(0))
             {
                 GameObject selectedObject = Select();
                 objManager.RequestOwnership(selectedObject);
@@ -37,7 +37,7 @@ namespace ASL.Manipulation.Controllers.PC
                 IDsToAdd.Add(2);
                 nm.WhiteListOwnership(go, IDsToAdd);
                 //nm.RestrictOwnership(go, IDsToAdd);
-            }
+            }*/
         }
 
         public GameObject Select()
