@@ -47,7 +47,7 @@ namespace ASL.Manipulation.Controllers.PC
             Vector3 mouseRay = cam.ScreenToWorldPoint(mousePos);
             RaycastHit hit;
             Physics.Raycast(cam.ScreenPointToRay(mousePos), out hit);
-
+            
             if (hit.collider != null)
             {
                 return hit.collider.gameObject;

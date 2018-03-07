@@ -67,9 +67,11 @@ public class Portal : MonoBehaviour
     void Update()
     {
         Matrix4x4 m = transform.worldToLocalMatrix;
-
-        Vector3 relativePos = m.MultiplyPoint(user.transform.position);
-        destinationPortal.UpdateCamera(-relativePos);
+        if (user != null)
+        {
+            Vector3 relativePos = m.MultiplyPoint(user.transform.position);
+            destinationPortal.UpdateCamera(-relativePos);
+        }
     }
 
     public void UpdateCamera(Vector3 relativePos)
