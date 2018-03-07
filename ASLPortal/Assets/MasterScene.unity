@@ -620,6 +620,11 @@ Prefab:
       propertyPath: MasterClient
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114865494129154450, guid: 7c3a98c9f7bf8cb43a9542ad7e44e5cb,
+        type: 2}
+      propertyPath: SpawnPos.z
+      value: -4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7c3a98c9f7bf8cb43a9542ad7e44e5cb, type: 2}
   m_IsPrefabParent: 0
