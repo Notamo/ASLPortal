@@ -10,26 +10,19 @@ public class Portal : MonoBehaviour
     public PortalTeleporter teleporter = null;
 
     public GameObject renderQuad = null;
-
     public Camera copyCamera = null;
     public Material copyCamMat = null;
-
-    public GameObject[] borders;
-
-    public int worldID = -1;
 
     // Use this for initialization
     void Start()
     {
-        Debug.Assert(destinationPortal != null);
         Debug.Assert(copyCamera != null);
-        Debug.Assert(user != null);
         Debug.Assert(renderQuad != null);
         Debug.Assert(teleporter != null);
     }
 
 
-    public void Initialize(Portal other, GameObject user, int layer)
+    public void Initialize(Portal other, GameObject user)
     {
         destinationPortal = other;
         this.user = user;
@@ -44,23 +37,8 @@ public class Portal : MonoBehaviour
         camMat.mainTexture = copyCamera.targetTexture;
         other.renderQuad.GetComponent<MeshRenderer>().material = camMat;
 
-        //set the appropriate layer
-        gameObject.layer = layer;
-        renderQuad.layer = layer;
-        foreach (GameObject g in borders)
-            g.layer = layer;
-
-
         //set up the teleporter if there is one
         teleporter.enterPortal = this;
-        
-    }
-
-    public void SetOtherLayer()
-    {
-        int dest = LayerMask.NameToLayer("ActiveWorld");
-        int mask = dest << dest;
-        copyCamera.cullingMask = ~mask; 
     }
 
     // Update is called once per frame
@@ -76,7 +54,7 @@ public class Portal : MonoBehaviour
 
     public void UpdateCamera(Vector3 relativePos)
     {
-        if (copyCamera != null)
+        if (copyCamera != null && destinationPortal != null)
         {
             copyCamera.transform.localPosition = new Vector3(relativePos.x, -relativePos.y, relativePos.z);
             copyCamera.transform.LookAt(transform);
@@ -92,23 +70,11 @@ public class Portal : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        Debug.Log("trigger enter");
-        //other.gameObject.transform.position = destinationPortal.transform.position + destinationPortal.transform.forward * 1.0f;
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        Debug.Log("trigger exit");
-    }
-
     //Teleport the object to the destination portal
     //(if there is one)
     public void TeleportObject(GameObject go)
     {
         Debug.Log("teleportObject! [" + go.name + "]");
-        //return;
 
         if(destinationPortal != null)
         {
@@ -131,20 +97,6 @@ public class Portal : MonoBehaviour
 
                 Vector3 positionOffset = Quaternion.Euler(0f, rotationDiff, 0f) * portalToPlayer;
                 go.transform.position = destinationPortal.transform.position + positionOffset;
-
-                Debug.Log(go.transform.position);
-
-                Debug.Log("dest portal layer: " + LayerMask.LayerToName(destinationPortal.gameObject.layer));
-
-                //only change the visible world if we're the ones going through the portal
-                if (go.GetComponent<PlayerController>() != null)
-                {
-                    WorldManager wm = GameObject.Find("WorldManager").GetComponent<WorldManager>();
-                    wm.SetVisibleWorld(destinationPortal.worldID);
-                }
-
-                Debug.Log("dest portal layer: " + LayerMask.LayerToName(destinationPortal.gameObject.layer));
-                go.layer = destinationPortal.gameObject.layer;
             }
         }
     }

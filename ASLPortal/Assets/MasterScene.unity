@@ -139,9 +139,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MasterClient: 1
-  mainCamera: {fileID: 1277827226}
-  portalSourcePrefab: {fileID: 1662639635695338, guid: 97f688b4bb5f08c4db22df10ff6075a3,
-    type: 2}
+  player: {fileID: 0}
 --- !u!4 &521520602
 Transform:
   m_ObjectHideFlags: 0

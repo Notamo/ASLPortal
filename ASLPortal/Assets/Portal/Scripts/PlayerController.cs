@@ -19,14 +19,10 @@ public class PlayerController : MonoBehaviour {
 	void Update () {
         PlayerMovementControls();
 
-        //Create a portal
+        //Create Portal
         if(Input.GetKeyDown(KeyCode.P))
         {
-            if(myWorld == null)
-            {
-                Debug.LogError("No MyWorld Set!");
-            }
-            else
+            if(myWorld != null)
             {
                 RaycastHit hit;
                 Physics.Raycast(new Ray(playerCamera.transform.position, playerCamera.transform.forward), out hit);
@@ -34,20 +30,60 @@ public class PlayerController : MonoBehaviour {
                 if(hit.collider != null && hit.collider.gameObject.name == "GreenPlane")
                 {
                     Debug.Log("Plane Hit!");
-                    if(myWorld != null)
-                    {
-                        Vector3 portalForward = playerCamera.transform.forward;
-                        portalForward.y = 0;
-                        myWorld.PlayerCreatePortal(hit.point, portalForward);
-                    }
+
+                    Vector3 portalForward = playerCamera.transform.forward;
+                    portalForward.y = 0;
+                    myWorld.PlayerCreatePortal(hit.point, portalForward);
+
                 }
             }
+            else
+            {
+                Debug.LogError("No World Set!");
+            }
+        }
+
+        //Register Portal
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            if (myWorld != null)
+            {
+                Debug.Log("Testing for portal hit");
+                RaycastHit hit;
+                Physics.Raycast(new Ray(playerCamera.transform.position, playerCamera.transform.forward), out hit);
+
+                if (hit.collider != null && hit.collider.gameObject.name == "Portal")
+                {
+                    Debug.Log("Portal Hit!");
+                    myWorld.PlayerRegisterPortal(hit.collider.gameObject);
+
+                }
+            }
+        }
+
+        //Link Portal Source
+        if(Input.GetKeyDown(KeyCode.T))
+        {
+
+        }
+
+        //Link Portal Dest
+        if(Input.GetKeyDown(KeyCode.Y))
+        {
+
+        }
+
+        //Link Portal
+        if(Input.GetKeyDown(KeyCode.U))
+        {
+
         }
         
     }
 
     private void PlayerMovementControls()
     {
+        #region WASD
         if (Input.GetKey(KeyCode.W))
         {
             transform.localPosition += transform.forward * Time.deltaTime * movementSpeed;
@@ -67,7 +103,9 @@ public class PlayerController : MonoBehaviour {
         {
             transform.localPosition += transform.right * Time.deltaTime * movementSpeed;
         }
+        #endregion
 
+        #region CAM_ROTATE
         if (Input.GetMouseButton(1))
         {
             float deltaMouseX = Input.GetAxis("Mouse X");
@@ -76,5 +114,6 @@ public class PlayerController : MonoBehaviour {
             transform.Rotate(Vector3.up, deltaMouseX * rotateSpeed);
             playerCamera.transform.Rotate(Vector3.right, -deltaMouseY * rotateSpeed);
         }
+        #endregion
     }
 }

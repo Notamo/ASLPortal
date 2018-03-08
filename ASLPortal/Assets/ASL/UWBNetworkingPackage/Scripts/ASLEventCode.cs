@@ -12,7 +12,9 @@ namespace UWBNetworkingPackage
         public const byte EV_JOIN = 55;
         public const byte EV_SYNC_OBJECT_OWNERSHIP_RESTRICTION = 96;
 
-        public const byte EV_WORLD_MADE = 30;
+        //Master client notify others that the world was instantiated (NOT IMPLEMENTED)
+        public const byte EV_WORLD_INSTANTIATED = 30;
+
         //Portal Events
         public const byte EV_PORTAL_REG = 40;
         public const byte EV_PORTAL_UNREG = 41;

@@ -57,12 +57,6 @@ public class MyWorld : MonoBehaviour {
             }
         }
 
-       /* if (Input.GetKeyDown(KeyCode.P) && !portalMade)
-        {
-            portalMgr.EstablishNewPortal(transform);
-            portalMade = true;
-        }*/
-
         /*if(Input.GetKeyDown(KeyCode.O) && !pairMade)
         {
             Debug.Log(PhotonNetwork.player.ID);
@@ -108,15 +102,27 @@ public class MyWorld : MonoBehaviour {
         PlayerController pc = playerAvatar.AddComponent<PlayerController>() as PlayerController;
         pc.playerCamera = mainCamera;
         pc.myWorld = this;
+
+        portalMgr.player = playerAvatar;
     }
 
     //PlayerCreatePortal
     //Try to create a portal where the player camera is looking at on the plane
     public void PlayerCreatePortal(Vector3 position, Vector3 forward)
     {
-        GameObject g = objManager.InstantiateOwnedObject("Portal") as GameObject;
-        g.transform.position = position;
-        g.transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
+        portalMgr.MakePortal(position, forward);
+    }
 
+    //PlayerRegisterPortal
+    //Try to register the portal with the PortalManager
+    public void PlayerRegisterPortal(GameObject portalGO)
+    {
+        Portal portal = portalGO.GetComponent<Portal>();
+        if(portal != null)
+            portalMgr.RequestRegisterPortal(portal);
+        else
+        {
+            Debug.LogError("Object is not a portal! cannot register!");
+        }
     }
 }

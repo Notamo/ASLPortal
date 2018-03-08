@@ -10,21 +10,17 @@ public class PortalManager : MonoBehaviour
     private ObjectInteractionManager objManager;
 
     public bool MasterClient = true;
-    public Camera mainCamera = null;
-    public GameObject portalSourcePrefab = null;
+    public GameObject player = null;
 
     //the set of all available portals
-    private Dictionary<int, GameObject> portalSet;
+    private Dictionary<int, Portal> portalSet;
 
     // Use this for initialization
     void Awake()
     {
-        Debug.Assert(mainCamera != null);
-        Debug.Assert(portalSourcePrefab != null);
         objManager = GameObject.Find("ObjectInteractionManager").GetComponent<ObjectInteractionManager>();
-
-        //Should I use the OnEvent in ObjectManager?
-        //PhotonNetwork.OnEventCall += OnEvent;
+        portalSet = new Dictionary<int, Portal>();
+        PhotonNetwork.OnEventCall += OnEvent;
     }
 
     // Update is called once per frame
@@ -36,194 +32,292 @@ public class PortalManager : MonoBehaviour
     /*
      * Instantiate and initialize the Portal Prefabs
      */
-    public void MakePortal()
+    public void MakePortal(Vector3 position, Vector3 forward)
     {
-
+        GameObject newPortal = objManager.InstantiateOwnedObject("Portal") as GameObject;
+        newPortal.transform.position = position;
+        newPortal.transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
     }
 
     /*
      * Portal System Action Requests
      * (Pre-Master Client Verification)
-     */ 
-    public void RequestRegisterPortal()
-    {
+     */
+    #region REQUESTS
 
+    //Request a prefab be registered with the portal management system
+    //Done by sending
+    public void RequestRegisterPortal(Portal portal)
+    {
+        Debug.Log("Requesting Portal Registration");
+        RaiseEventOptions options = new RaiseEventOptions();
+        options.Receivers = ReceiverGroup.MasterClient;
+
+        
+        //the data we're sending with the message (viewID of the portal)
+        int viewID = portal.GetComponent<PhotonView>().viewID;
+       
+        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_PORTAL_REG, viewID, true, options);
     }
+
+    public void RequestUnregisterPortal(Portal portal)
+    {
+        Debug.Log("Requesting Portal Registration");
+        RaiseEventOptions options = new RaiseEventOptions();
+        options.Receivers = ReceiverGroup.MasterClient;
+
+        int viewID = portal.GetComponent<PhotonView>().viewID;
+
+        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_PORTAL_UNREG, viewID, true, options);
+    }
+
+    //Request a destination be set for a portal
+    public void RequestLinkPortal(Portal source, Portal destination)
+    {
+        Debug.Log("Requesting Portal Registration");
+        RaiseEventOptions options = new RaiseEventOptions();
+        options.Receivers = ReceiverGroup.MasterClient;
+
+        int sourceID = source.GetComponent<PhotonView>().viewID;
+        int destID = destination.GetComponent<PhotonView>().viewID;
+
+        int[] linkIDPair = new int[2];
+        linkIDPair[0] = sourceID;
+        linkIDPair[1] = destID;
+
+
+        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_PORTAL_UNREG, linkIDPair, true, options);
+    }
+
+    public void RequestUnlinkPortal(Portal source)
+    {
+        Debug.Log("Requesting Portal Unlink");
+        RaiseEventOptions options = new RaiseEventOptions();
+        options.Receivers = ReceiverGroup.MasterClient;
+
+        int viewID = source.GetComponent<PhotonView>().viewID;
+
+        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_PORTAL_UNREG, viewID, true, options);
+    }
+    #endregion
+
 
     /*
      * Portal System Actions
      * (Post-Master Client Verification)
      * --Only Called from OnEvent
      */
-    private void RegisterPortal()
+
+    //Register a portal by adding a Portal to the Dictionary
+    private bool RegisterPortal(int portalID)
     {
-
-    }
-
-    private void UnregisterPortal()
-    {
-
-    }
-
-    private void LinkPortal(Portal source, Portal destination)
-    {
-
-    }
-
-    private void UnlinkPortal(Portal source)
-    {
-
-    }
-
-    /*
-    //Establish a new Portal as a destination
-    public void EstablishNewPortal(Transform location)
-    {
-        Debug.Log("EstablishNewPortal!");
-        GameObject g = objManager.InstantiateOwnedObject("PortalDestination");
-        //GameObject g = objManager.Instantiate("PortalDestination", location.position + new Vector3(0, 1, 2), location.localRotation, location.localScale);
-        //PortalDestination pd = g.GetComponent<PortalDestination>();
-        //objManager.Instantiate(g, )
-        //pd.setFollow(mainCamera.transform);
-
-        g.transform.SetParent(location.transform);
-        g.transform.localPosition = new Vector3(0, 1, 2);
-
-        //set an ownership whitlist for the new portal (us only);
-        UWBNetworkingPackage.NetworkManager nm = GameObject.Find("NetworkManager").GetComponent<UWBNetworkingPackage.NetworkManager>();
-        int myID = PhotonNetwork.player.ID;
-        List<int> IDsToAdd = new List<int>();
-        IDsToAdd.Add(myID);
-        nm.WhiteListOwnership(g, IDsToAdd);
-
-
-        //tell the primary to add this portal to its list
-        Debug.Log("RAISING EVENTS");
-        RaiseEventOptions options = new RaiseEventOptions();
-        options.Receivers = ReceiverGroup.All;
-        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_PORTAL_REG, 1, true, options);
-        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_PORTAL_UNREG, 2, true, options);
-        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_PORTAL_LINK, 3, true, options);
-        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_PORTAL_UNLINK, 4, true, options);
-
-        //ReceiveNewPortal(pd, true);
-    }
-
-    //A new portl has been detected, set up the proper resources and logic to recieve the info!
-    public void ReceiveNewPortal(PortalDestination destination, bool mine = false)
-    {
-        int ownerID = destination.GetComponent<PhotonView>().ownerId;
-        //rename the the portal to something that makes sense
-        if (!mine) destination.name += (":" + ownerID);
-
-        GameObject other;
-        GameObject ours;
-
-        if (mine)
+        if(IsIDRegistered(portalID))
         {
-            other = Instantiate(portalSourcePrefab, destination.transform); // worldMgr.worlds[1].transform);
-            ours = Instantiate(portalSourcePrefab, worldMgr.worlds[PhotonNetwork.player.ID].transform);
+            Debug.LogError("Unable to register portal! Portal already registered");
+            return false;
+        }
+
+        PhotonView[] views = GameObject.FindObjectsOfType<PhotonView>();
+        foreach (PhotonView view in views)
+        {
+            if (view.viewID == portalID)
+            {
+                GameObject g = view.gameObject;
+                Portal p = g.GetComponent<Portal>();
+                if (p != null)
+                {
+                    portalSet.Add(view.viewID, p);
+                    return true;
+                }
+                else
+                {
+                    Debug.LogError("Unable to register portal! Object associated with photonID [" + portalID + "] is not a portal!");
+                    return false;
+                }
+            }
+        }
+
+        Debug.LogError("Unable to register portal! Could not find portal in PhotonView List!");
+        return false;
+    }
+
+    private bool UnregisterPortal(int portalID)
+    {
+        //ignore for now
+        return false;
+    }
+
+    private bool LinkPortal(int sourceID, int destinationID)
+    {
+        if(!player)
+        {
+            Debug.LogError("Cannot Link Portal! No player object available");
+            return false;
         }
         else
         {
-            other = Instantiate(portalSourcePrefab, worldMgr.worlds[2].transform);
-            ours = Instantiate(portalSourcePrefab, worldMgr.worlds[PhotonNetwork.player.ID].transform);
+            if (IsIDRegistered(sourceID) && IsIDRegistered(destinationID))
+            {
+                portalSet[sourceID].Initialize(portalSet[destinationID], player);
+                return true;
+            }
+            else
+            {
+                Debug.Log("Cannot Link Portal! One or more portals is not registered");
+                return false;
+            }
         }
-        other.name = "other";
-        ours.name = "ours";
-
-        ours.transform.Translate(new Vector3(0, 1, 2));
-        other.transform.Translate(new Vector3(0, 1, 2));
-
-        Portal otherPortal = other.GetComponent<Portal>();
-        Portal ourPortal = ours.GetComponent<Portal>();
-
-        ourPortal.worldID = worldMgr.myWorld;
-        otherPortal.worldID = 2;
-
-        ourPortal.Initialize(otherPortal, mainCamera.gameObject, LayerMask.NameToLayer("MyWorld"));
-        otherPortal.Initialize(ourPortal, mainCamera.gameObject, LayerMask.NameToLayer("OtherWorld"));
-
-        worldMgr.setAppropriateLayer(ours, worldMgr.myWorld);
-        worldMgr.setAppropriateLayer(other, 2);
     }
 
-    public Portal MakeSoloPortal(Vector3 position, int worldID)
+    private bool UnlinkPortal(int sourceID)
     {
-        GameObject g = objManager.InstantiateOwnedObject("Portal");
-        g.transform.parent = worldMgr.worlds[worldID].transform;
-        g.transform.Translate(position);
-
-        Portal portal = g.GetComponent<Portal>();
-
-        portal.worldID = worldID;
-        worldMgr.setAppropriateLayer(g, worldID);
-
-        return portal;
+        //ignore for now
+        return false;
     }
 
-    public void LinkPortalPair(Portal portal1, Portal portal2)
-    {
-        portal1.Initialize(portal2, mainCamera.gameObject, LayerMask.NameToLayer("ActiveWorld"));
-        portal2.Initialize(portal1, mainCamera.gameObject, LayerMask.NameToLayer("ActiveWorld"));
-
-        portal1.SetOtherLayer();
-        portal2.SetOtherLayer();
-    }
-
+    #region EVENT_PROCESSING
     //handle events specifically related to portal stuff
     private void OnEvent(byte eventCode, object content, int senderID)
     {
         //handle events specifically related to portal stuff
-        switch(eventCode)
+        switch (eventCode)
         {
             case UWBNetworkingPackage.ASLEventCode.EV_PORTAL_REG:
                 Debug.Log("EV_REG: " + (int)content);
+                ProcessRegisterPortalEvent((int)content);
                 break;
             case UWBNetworkingPackage.ASLEventCode.EV_PORTAL_UNREG:
                 Debug.Log("EV_UNREG: " + (int)content);
+                ProcessUnregisterPortalEvent((int)content);
                 break;
             case UWBNetworkingPackage.ASLEventCode.EV_PORTAL_LINK:
                 Debug.Log("EV_LINK: " + (int)content);
+                int[] idPair = (int[])content;
+                ProcessLinkPortalEvent(idPair);
                 break;
             case UWBNetworkingPackage.ASLEventCode.EV_PORTAL_UNLINK:
+                ProcessUnlinkPortalEvent((int)content);
                 Debug.Log("EV_UNLINK: " + (int)content);
                 break;
         }
     }
 
-    private void RegisterPortal(int viewID)
+    private void ProcessRegisterPortalEvent(int portalID)
     {
-        PhotonView[] views = GameObject.FindObjectsOfType<PhotonView>();
-        foreach(PhotonView view in views)
+        if(MasterClient) //if we are master client, verify first
         {
-            if (view.viewID == viewID)
+            if(RegisterPortal(portalID))
             {
-                portalSet.Add(view.viewID, view.gameObject);
-                return;
+                Debug.Log("Portal Registration Request Approved");
+                RaiseEventOptions options = new RaiseEventOptions();
+                options.Receivers = ReceiverGroup.Others;
+                PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_PORTAL_REG, portalID, true, options);
+            }
+            else
+            {
+                Debug.Log("Portal Registration Request Failed");
+            }
+        }
+        else
+        {
+            RegisterPortal(portalID);
+        }
+    }
+
+    private void ProcessUnregisterPortalEvent(int portalID)
+    {
+        if(MasterClient)
+        {
+            if(UnregisterPortal(portalID))
+            {
+                Debug.Log("Portal Unregistration Request Approved");
+                RaiseEventOptions options = new RaiseEventOptions();
+                options.Receivers = ReceiverGroup.Others;
+                PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_PORTAL_UNREG, portalID, true, options);
+            }
+            else
+            {
+                Debug.Log("Portal Unregistration Request Failed");
+            }
+        }
+        else
+        {
+            UnregisterPortal(portalID);
+        }
+    }
+
+    private void ProcessLinkPortalEvent(int[] linkIDPair)
+    {
+        if(MasterClient)
+        {
+            if(LinkPortal(linkIDPair[0], linkIDPair[1]))
+            {
+                Debug.Log("Portal Link Request Approved");
+                RaiseEventOptions options = new RaiseEventOptions();
+                options.Receivers = ReceiverGroup.Others;
+                PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_PORTAL_LINK, linkIDPair, true, options);
+            }
+            else
+            {
+                Debug.Log("Portal Link Request Failed");
+            }
+        }
+        else
+        {
+            LinkPortal(linkIDPair[0], linkIDPair[1]);
+        }
+    }
+
+    private void ProcessUnlinkPortalEvent(int sourceID)
+    {
+        if (MasterClient)
+        {
+            if (UnlinkPortal(sourceID))
+            {
+                Debug.Log("Portal Unlink Request Approved");
+                RaiseEventOptions options = new RaiseEventOptions();
+                options.Receivers = ReceiverGroup.Others;
+                PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_PORTAL_LINK, sourceID, true, options);
+            }
+            else
+            {
+                Debug.Log("Portal Unlink Request Failed");
+            }
+        }
+    }
+    #endregion
+
+    //test if the id corresponds with a portal
+    private bool VerifyViewIDPortal(int candID)
+    {
+        Debug.Log("Verifying View ID [" + candID + "]");
+        PhotonView[] views = GameObject.FindObjectsOfType<PhotonView>();
+        foreach (PhotonView view in views)
+        {
+            if (view.viewID == candID)
+            {
+                GameObject g = view.gameObject;
+                Portal p = g.GetComponent<Portal>();
+                if (p != null)
+                {
+                    Debug.Log("ID [" + candID + "] is valid");
+                    return true;
+                }
+                else
+                {
+                    Debug.LogError("Unable to verify portal! Object associated with photonID [" + candID + "] is not a portal!");
+                    return false;
+                }
             }
         }
 
-        Debug.LogError("Unable to find portal in PhotonView List!");
+        Debug.LogError("Unable to verify portal! Could not find ID [" + candID + "] in PhotonView List!");
+        return false;
     }
 
-    private void UnregisterPortal(int viewID)
+    //Test if the id is registered as a portal
+    private bool IsIDRegistered(int id)
     {
-        if(!portalSet.Remove(viewID))
-        {
-            Debug.LogError("Unable to find portal in portalSet! Cannot unregister!");
-        }
-
+        return portalSet.ContainsKey(id);
     }
-
-    private void LinkPortal(int srcViewID, int destViewID)
-    {
-        
-    }
-
-    private void UnlinkPortal(int srcViewID)
-    {
-
-    }
-    */
 }
