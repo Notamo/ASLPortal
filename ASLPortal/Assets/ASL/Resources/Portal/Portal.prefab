@@ -506,7 +506,7 @@ MonoBehaviour:
   teleporter: {fileID: 114715509019102460}
   renderQuad: {fileID: 1530876642372846}
   copyCamera: {fileID: 20097113137149046}
-  copyCamMat: {fileID: 0}
+  copyCamMat: {fileID: 2100000, guid: c1e565ede84a13c4dbf7d9630bbdb1c3, type: 2}
 --- !u!114 &114715509019102460
 MonoBehaviour:
   m_ObjectHideFlags: 1

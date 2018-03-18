@@ -37,7 +37,7 @@ namespace ASL.Manipulation.Controllers.PC
                 IDsToAdd.Add(2);
                 nm.WhiteListOwnership(go, IDsToAdd);
                 //nm.RestrictOwnership(go, IDsToAdd);
-            }*/
+            }
         }
 
         public GameObject Select()

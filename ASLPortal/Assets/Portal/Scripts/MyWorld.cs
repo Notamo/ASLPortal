@@ -23,10 +23,17 @@ public class MyWorld : MonoBehaviour {
     private bool pairMade = false;
     private ObjectInteractionManager objManager;
 
-	// Use this for initialization
-	void Awake () {
+
+    //UI
+    public SourceDestPanel linkPanel = null;
+    int src = -1;
+    int dest = -1;
+
+    // Use this for initialization
+    void Awake () {
         Debug.Assert(portalMgr != null);
         Debug.Assert(mainCamera != null);
+        Debug.Assert(linkPanel != null);
 
         objManager = GameObject.Find("ObjectInteractionManager").GetComponent<ObjectInteractionManager>();
     }
@@ -57,16 +64,45 @@ public class MyWorld : MonoBehaviour {
             }
         }
 
-        /*if(Input.GetKeyDown(KeyCode.O) && !pairMade)
+        //Link Portal Source
+        if (Input.GetKeyDown(KeyCode.T))
         {
-            Debug.Log(PhotonNetwork.player.ID);
-            Portal portal1 = portalMgr.MakeSoloPortal(new Vector3(-2, 1, 10), PhotonNetwork.player.ID);
-            Portal portal2 = portalMgr.MakeSoloPortal(new Vector3(2, 1, 10), PhotonNetwork.player.ID);
+            Debug.Log("Testing for portal hit src");
+            RaycastHit hit;
+            Physics.Raycast(new Ray(mainCamera.transform.position, mainCamera.transform.forward), out hit);
 
-            portalMgr.LinkPortalPair(portal1, portal2);
-            pairMade = true;
-        }*/
-	}
+            if (hit.collider != null && hit.collider.gameObject.name == "Portal")
+            {
+                src = hit.collider.gameObject.GetComponent<PhotonView>().viewID;
+            }
+            linkPanel.setSourceID(src);
+        }
+
+        //Link Portal Dest
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            Debug.Log("Testing for portal hit dest");
+            RaycastHit hit;
+            Physics.Raycast(new Ray(mainCamera.transform.position, mainCamera.transform.forward), out hit);
+
+            if (hit.collider != null && hit.collider.gameObject.name == "Portal")
+            {
+                dest = hit.collider.gameObject.GetComponent<PhotonView>().viewID;
+            }
+            linkPanel.setDestID(dest);
+        }
+
+        //Link Portal
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            Debug.Log("u pressed");
+            if (src != -1 && dest != -1) {
+                Debug.Log("req link portal");
+                portalMgr.RequestLinkPortal(src, dest);
+            }
+        }
+
+    }
 
     private void MakeWorld()
     {

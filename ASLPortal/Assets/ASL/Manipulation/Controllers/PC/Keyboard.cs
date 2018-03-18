@@ -71,7 +71,7 @@ namespace ASL.Manipulation.Controllers.PC
                 UWBNetworkingPackage.NetworkManager nm = GameObject.Find("NetworkManager").GetComponent<UWBNetworkingPackage.NetworkManager>();
                 GameObject go = GameObject.Find("Sphere");
                 nm.WhiteListOwnership(go, IDsToAdd);
-            }*/
+            }
         }
 
         public MoveBehavior MoveBehavior
