@@ -16,12 +16,12 @@ namespace ASL.Manipulation.Controllers.PC
 
         public void Update()
         {
-          /*  if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0))
             {
                 GameObject selectedObject = Select();
                 objManager.RequestOwnership(selectedObject);
             }
-            if (Input.GetMouseButtonDown(1))
+            /*if (Input.GetMouseButtonDown(1))
             {
                 string prefabName = "Sphere";
                 Vector3 position = new Vector3(0, 0, 2);

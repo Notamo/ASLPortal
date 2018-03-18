@@ -19,7 +19,7 @@ namespace ASL.Manipulation.Controllers.PC
         // Update is called once per frame
         void Update()
         {
-          /*  if (Input.GetKey(KeyCode.DownArrow)
+            if (Input.GetKey(KeyCode.DownArrow)
                 || Input.GetKey(KeyCode.S))
             {
                 MoveBehavior.Down();
@@ -32,6 +32,7 @@ namespace ASL.Manipulation.Controllers.PC
             if(Input.GetKey(KeyCode.LeftArrow)
                 || Input.GetKey(KeyCode.A))
             {
+                Debug.Log("A");
                 MoveBehavior.Left();
             }
             if(Input.GetKey(KeyCode.RightArrow)
@@ -47,7 +48,7 @@ namespace ASL.Manipulation.Controllers.PC
             {
                 MoveBehavior.RotateCounterClockwise();
             }
-            
+            /*
             if (Input.GetKey(KeyCode.R))
             {
                 //gameObject.GetComponent<CreateObject>().CreatePUNObject("Rooms/Room2/Room2");
