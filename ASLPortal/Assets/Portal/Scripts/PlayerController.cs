@@ -61,23 +61,7 @@ public class PlayerController : MonoBehaviour {
             }
         }
 
-        //Link Portal Source
-        if(Input.GetKeyDown(KeyCode.T))
-        {
 
-        }
-
-        //Link Portal Dest
-        if(Input.GetKeyDown(KeyCode.Y))
-        {
-
-        }
-
-        //Link Portal
-        if(Input.GetKeyDown(KeyCode.U))
-        {
-
-        }
         
     }
 

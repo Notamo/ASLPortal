@@ -89,6 +89,27 @@ public class PortalManager : MonoBehaviour
         PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_PORTAL_UNREG, linkIDPair, true, options);
     }
 
+    public void RequestLinkPortal(int source, int destination)
+    {
+        if (!IsIDRegistered(source) || !IsIDRegistered(destination))
+        {
+            Debug.Log("Bad call to ReqLinkPortal, nonregistered portals");
+            return;
+        }
+
+        Debug.Log("Requesting Portal Registration");
+        RaiseEventOptions options = new RaiseEventOptions();
+        options.Receivers = ReceiverGroup.MasterClient;
+
+
+        int[] linkIDPair = new int[2];
+        linkIDPair[0] = source;
+        linkIDPair[1] = destination;
+
+
+        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_PORTAL_LINK, linkIDPair, true, options);
+    }
+
     public void RequestUnlinkPortal(Portal source)
     {
         Debug.Log("Requesting Portal Unlink");
@@ -97,7 +118,7 @@ public class PortalManager : MonoBehaviour
 
         int viewID = source.GetComponent<PhotonView>().viewID;
 
-        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_PORTAL_UNREG, viewID, true, options);
+        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_PORTAL_UNLINK, viewID, true, options);
     }
     #endregion
 
@@ -191,8 +212,8 @@ public class PortalManager : MonoBehaviour
                 ProcessUnregisterPortalEvent((int)content);
                 break;
             case UWBNetworkingPackage.ASLEventCode.EV_PORTAL_LINK:
-                Debug.Log("EV_LINK: " + (int)content);
                 int[] idPair = (int[])content;
+                Debug.Log("EV_LINK: " + idPair);
                 ProcessLinkPortalEvent(idPair);
                 break;
             case UWBNetworkingPackage.ASLEventCode.EV_PORTAL_UNLINK:
