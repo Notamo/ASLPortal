@@ -39,7 +39,6 @@ namespace ASL.Manipulation.Objects
 
         public virtual void Left()
         {
-            Debug.Log("left");
             if (focusObject != null)
             {
                 focusObject.transform.Translate(Vector3.left * MoveScale);

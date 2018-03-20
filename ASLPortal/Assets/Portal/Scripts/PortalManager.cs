@@ -180,6 +180,7 @@ public class PortalManager : MonoBehaviour
             if (IsIDRegistered(sourceID) && IsIDRegistered(destinationID))
             {
                 portalSet[sourceID].Initialize(portalSet[destinationID], player);
+                portalSet[destinationID].Initialize(portalSet[sourceID], player);
                 return true;
             }
             else

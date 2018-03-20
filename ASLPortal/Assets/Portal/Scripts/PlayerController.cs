@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour {
     public float movementSpeed = 10.0f;
     public float rotateSpeed = 10.0f;
 
-    public Camera playerCamera = null;
+    public Camera userCamera = null;
     public MyWorld myWorld = null;
 
 	// Use this for initialization
@@ -25,13 +25,13 @@ public class PlayerController : MonoBehaviour {
             if(myWorld != null)
             {
                 RaycastHit hit;
-                Physics.Raycast(new Ray(playerCamera.transform.position, playerCamera.transform.forward), out hit);
+                Physics.Raycast(new Ray(userCamera.transform.position, userCamera.transform.forward), out hit);
 
                 if(hit.collider != null && hit.collider.gameObject.name == "GreenPlane")
                 {
                     Debug.Log("Plane Hit!");
 
-                    Vector3 portalForward = playerCamera.transform.forward;
+                    Vector3 portalForward = userCamera.transform.forward;
                     portalForward.y = 0;
                     myWorld.PlayerCreatePortal(hit.point, portalForward);
 
@@ -48,13 +48,12 @@ public class PlayerController : MonoBehaviour {
         {
             if (myWorld != null)
             {
-                Debug.Log("Testing for portal hit");
                 RaycastHit hit;
-                Physics.Raycast(new Ray(playerCamera.transform.position, playerCamera.transform.forward), out hit);
+                int mask = 1 << LayerMask.NameToLayer("Portals");
+                Physics.Raycast(new Ray(userCamera.transform.position, userCamera.transform.forward), out hit, mask);
 
-                if (hit.collider != null && hit.collider.gameObject.name == "Portal")
+                if (hit.collider != null)
                 {
-                    Debug.Log("Portal Hit!");
                     myWorld.PlayerRegisterPortal(hit.collider.gameObject);
 
                 }
@@ -96,7 +95,7 @@ public class PlayerController : MonoBehaviour {
             float deltaMouseY = Input.GetAxis("Mouse Y");
             
             transform.Rotate(Vector3.up, deltaMouseX * rotateSpeed);
-            playerCamera.transform.Rotate(Vector3.right, -deltaMouseY * rotateSpeed);
+            userCamera.transform.Rotate(Vector3.right, -deltaMouseY * rotateSpeed);
         }
         #endregion
     }

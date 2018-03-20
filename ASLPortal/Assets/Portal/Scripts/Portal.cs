@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class Portal : MonoBehaviour
 {
-
-    public GameObject user = null;
+    public Camera userCamera = null;
     public Portal destinationPortal = null;
     public PortalTeleporter teleporter = null;
 
@@ -25,12 +24,9 @@ public class Portal : MonoBehaviour
     public void Initialize(Portal other, GameObject user)
     {
         destinationPortal = other;
-        this.user = user;
+        userCamera = user.GetComponent<PlayerController>().userCamera;
 
-        if (copyCamera.targetTexture != null)
-        {
-            copyCamera.targetTexture.Release();
-        }
+        if (copyCamera.targetTexture != null) copyCamera.targetTexture.Release();
         copyCamera.targetTexture = new RenderTexture(Screen.width, Screen.height, 24);
 
         Material camMat = new Material(copyCamMat);
@@ -44,29 +40,36 @@ public class Portal : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Matrix4x4 m = transform.worldToLocalMatrix;
-        if (user != null)
+        //sent the user cam info to the destination portal if there is one
+        //relative positions and orientations to the this portal
+        if (destinationPortal != null && userCamera != null)
         {
-            Vector3 relativePos = m.MultiplyPoint(user.transform.position);
-            destinationPortal.UpdateCamera(-relativePos);
+            Matrix4x4 m = transform.worldToLocalMatrix;
+            Vector3 playerOffset = m.MultiplyPoint(userCamera.transform.position);
+            Vector3 relativePlayerFwd = m.MultiplyVector(userCamera.transform.forward);
+            Vector3 relativePlayerUp = m.MultiplyVector(userCamera.transform.up);
+
+            destinationPortal.UpdateCopyCamera(FlipLocalVector(playerOffset), 
+                                               FlipLocalVector(relativePlayerFwd), 
+                                               FlipLocalVector(relativePlayerUp));
         }
     }
 
-    public void UpdateCamera(Vector3 relativePos)
+    //flip a vector across the portal (ignores local y-axis)
+    private Vector3 FlipLocalVector(Vector3 vec) { return new Vector3(-vec.x, vec.y, -vec.z); }
+
+    //Update the copy camera to match the given
+    //relative position and orientations
+    public void UpdateCopyCamera(Vector3 cameraOffset, Vector3 relativeCameraFwd, Vector3 relativeCameraUp)
     {
         if (copyCamera != null && destinationPortal != null)
         {
-            copyCamera.transform.localPosition = new Vector3(relativePos.x, -relativePos.y, relativePos.z);
-            copyCamera.transform.LookAt(transform);
+            Matrix4x4 m = transform.localToWorldMatrix;
 
-            float angularDiferenceBetweenPortalRotations =
-                Quaternion.Angle(destinationPortal.transform.rotation, transform.rotation);
-
-            Quaternion portalRotationalDifference =
-                Quaternion.AngleAxis(180 + angularDiferenceBetweenPortalRotations, Vector3.up);
-
-            Vector3 newCameraDirection = portalRotationalDifference * user.transform.forward;
-            copyCamera.transform.rotation = Quaternion.LookRotation(newCameraDirection, Vector3.up);
+            copyCamera.transform.position = m.MultiplyPoint(cameraOffset);
+            copyCamera.transform.rotation = 
+                Quaternion.LookRotation(m.MultiplyVector(relativeCameraFwd),
+                                        m.MultiplyVector(relativeCameraUp));
         }
     }
 

@@ -136,7 +136,7 @@ public class MyWorld : MonoBehaviour {
 
         //add the player controller after so other players can't manipulate this
         PlayerController pc = playerAvatar.AddComponent<PlayerController>() as PlayerController;
-        pc.playerCamera = mainCamera;
+        pc.userCamera = mainCamera;
         pc.myWorld = this;
 
         portalMgr.player = playerAvatar;
