@@ -6,18 +6,17 @@ public class Portal : MonoBehaviour
 {
     public Camera userCamera = null;
     public Portal destinationPortal = null;
-    public PortalTeleporter teleporter = null;
 
     public GameObject renderQuad = null;
-    public Camera copyCamera = null;
+    public GameObject copyCameraPrefab = null;
+    private Camera copyCamera = null;
     public Material copyCamMat = null;
 
     // Use this for initialization
     void Start()
     {
-        Debug.Assert(copyCamera != null);
+        Debug.Assert(copyCameraPrefab != null);
         Debug.Assert(renderQuad != null);
-        Debug.Assert(teleporter != null);
     }
 
 
@@ -26,15 +25,16 @@ public class Portal : MonoBehaviour
         destinationPortal = other;
         userCamera = user.GetComponent<PlayerController>().userCamera;
 
+        //set up the copy camera
+        copyCamera = Instantiate(copyCameraPrefab).GetComponent<Camera>();
         if (copyCamera.targetTexture != null) copyCamera.targetTexture.Release();
         copyCamera.targetTexture = new RenderTexture(Screen.width, Screen.height, 24);
 
+
+        //Set up the material to reference the copy camera's rendertexture
         Material camMat = new Material(copyCamMat);
         camMat.mainTexture = copyCamera.targetTexture;
         other.renderQuad.GetComponent<MeshRenderer>().material = camMat;
-
-        //set up the teleporter if there is one
-        teleporter.enterPortal = this;
     }
 
     // Update is called once per frame
