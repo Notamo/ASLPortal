@@ -6,13 +6,17 @@ public class PlayerController : MonoBehaviour {
 
     public float movementSpeed = 10.0f;
     public float rotateSpeed = 10.0f;
+    public float acceleration = 10.0f;
+
+    private Rigidbody rigidBody = null;
 
     public Camera userCamera = null;
     public MyWorld myWorld = null;
 
 	// Use this for initialization
 	void Start () {
-		
+        rigidBody = GetComponent<Rigidbody>();
+        Debug.Assert(rigidBody != null);
 	}
 	
 	// Update is called once per frame
@@ -49,13 +53,12 @@ public class PlayerController : MonoBehaviour {
             if (myWorld != null)
             {
                 RaycastHit hit;
-                int mask = 1 << LayerMask.NameToLayer("Portals");
+                var mask = 1 << LayerMask.NameToLayer("Portals");
                 Physics.Raycast(new Ray(userCamera.transform.position, userCamera.transform.forward), out hit, mask);
 
                 if (hit.collider != null)
                 {
                     myWorld.PlayerRegisterPortal(hit.collider.gameObject);
-
                 }
             }
         }
@@ -66,26 +69,38 @@ public class PlayerController : MonoBehaviour {
 
     private void PlayerMovementControls()
     {
+
         #region WASD
+        Vector3 moveVelocity = Vector3.zero;
+
         if (Input.GetKey(KeyCode.W))
         {
-            transform.localPosition += transform.forward * Time.deltaTime * movementSpeed;
-        }
+            //transform.localPosition += transform.forward * Time.deltaTime * movementSpeed;
+            moveVelocity += transform.forward * acceleration;
+            
+        }        
 
         if (Input.GetKey(KeyCode.A))
         {
-            transform.localPosition -= transform.right * Time.deltaTime * movementSpeed;
+            //transform.localPosition -= transform.right * Time.deltaTime * movementSpeed;
+            moveVelocity -= transform.right * movementSpeed;
         }
 
         if (Input.GetKey(KeyCode.S))
         {
-            transform.localPosition -= transform.forward * Time.deltaTime * movementSpeed;
+            //transform.localPosition -= transform.forward * Time.deltaTime * movementSpeed;
+            moveVelocity -= transform.forward * movementSpeed;
         }
 
         if (Input.GetKey(KeyCode.D))
         {
-            transform.localPosition += transform.right * Time.deltaTime * movementSpeed;
+            //transform.localPosition += transform.right * Time.deltaTime * movementSpeed;
+            moveVelocity += transform.right * movementSpeed;
         }
+        rigidBody.velocity = moveVelocity;
+
+
+
         #endregion
 
         #region CAM_ROTATE

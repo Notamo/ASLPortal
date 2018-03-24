@@ -168,6 +168,8 @@ public class PortalManager : MonoBehaviour
         return false;
     }
 
+    //Link two portals together
+    //As of now, it's a dual link all the time
     private bool LinkPortal(int sourceID, int destinationID)
     {
         if(!player)

@@ -17,11 +17,8 @@ public class PortalTeleporter : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log(other.gameObject.name);
-        Debug.Log("trigger enter");
         if(enterPortal != null)
         {
-            Debug.Log("enterPortal != null");
             enterPortal.TeleportObject(other.gameObject);
         }
     }

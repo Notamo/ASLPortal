@@ -26,7 +26,7 @@ public class Portal : MonoBehaviour
         userCamera = user.GetComponent<PlayerController>().userCamera;
 
         //set up the copy camera
-        copyCamera = Instantiate(copyCameraPrefab).GetComponent<Camera>();
+        copyCamera = Instantiate(copyCameraPrefab, transform).GetComponent<Camera>();
         if (copyCamera.targetTexture != null) copyCamera.targetTexture.Release();
         copyCamera.targetTexture = new RenderTexture(Screen.width, Screen.height, 24);
 
@@ -78,29 +78,82 @@ public class Portal : MonoBehaviour
     public void TeleportObject(GameObject go)
     {
         Debug.Log("teleportObject! [" + go.name + "]");
-
+        Debug.Log("Source: " + this.GetComponent<PhotonView>().viewID.ToString());
+        
+        //teleportation will only happen if:
+        //1. a destination portal exists
+        //2. the object is on the front side of the source portal
+        //4. the object is moving towards the portal
         if(destinationPortal != null)
         {
-            //do the teleporting
-            Debug.Log("DestinationPortal != null");
+            Debug.Log("Destination: " + destinationPortal.GetComponent<PhotonView>().viewID.ToString());
 
-            Vector3 portalToPlayer = go.transform.position - transform.position;
-            float dotProduct = Vector3.Dot(transform.forward, portalToPlayer);
-            Debug.Log("ptp: " + portalToPlayer);
-            Debug.Log("fwd: " + transform.forward);
-            Debug.Log("dot: " + dotProduct);
+            Matrix4x4 m = transform.worldToLocalMatrix;
+            Vector3 objectOffset = m.MultiplyPoint(userCamera.transform.position);
 
-            if (dotProduct < 0f)
+            //Vector3 objectOffset = go.transform.position - transform.position;
+            bool playerInFront = Vector3.Dot(transform.forward, objectOffset) < 0.0f;
+
+            //is object moving towards the portal
+            Vector3 objVelocity = go.GetComponent<Rigidbody>().velocity;
+            bool movingTowards = Vector3.Dot(transform.forward, objVelocity) > 0.0f;
+
+            //is object in front of the portal
+            if (playerInFront)
             {
-                Debug.Log("dotProduct < 0");
-                Debug.Log(go.transform.position);
-                float rotationDiff = -Quaternion.Angle(transform.rotation, destinationPortal.transform.rotation);
-                rotationDiff += 180;
-                go.transform.Rotate(Vector3.up, rotationDiff);
-
-                Vector3 positionOffset = Quaternion.Euler(0f, rotationDiff, 0f) * portalToPlayer;
-                go.transform.position = destinationPortal.transform.position + positionOffset;
+                if (movingTowards)
+                {
+                    TeleportEnter(go);
+                }
+                else
+                {
+                    Debug.Log("Not moving towards portal, ignoring");
+                }
+            }
+            else
+            {
+                Debug.Log("Player not in front of portal, ignoring");
             }
         }
+        else
+        {
+            Debug.Log("No destination to teleport to, ignoring");
+        }
     }
+
+
+    /*
+     * Transforms for teleportation
+     * Similar to camera trnsforms -- needs refactoring
+    */
+    public void TeleportEnter(GameObject go)
+    {
+        Matrix4x4 m = transform.worldToLocalMatrix;
+
+        Vector3 objectOffset =           m.MultiplyPoint(go.transform.position);  
+        Vector3 relativeObjectFwd =      m.MultiplyVector(go.transform.forward);
+        Vector3 relativeObjectUp =       m.MultiplyVector(go.transform.up);
+        Vector3 relativeObjectVelocity = m.MultiplyVector(go.GetComponent<Rigidbody>().velocity);
+
+        destinationPortal.TeleportExit(go,
+                                       FlipLocalVector(objectOffset),
+                                       FlipLocalVector(relativeObjectFwd),
+                                       FlipLocalVector(relativeObjectUp),
+                                       FlipLocalVector(relativeObjectVelocity));    //I think we actually need to stick with flip local vector for this one
+
+    }
+
+    public void TeleportExit(GameObject go, 
+                            Vector3 relativePosition, 
+                            Vector3 relativeFwd, 
+                            Vector3 relativeUp, 
+                            Vector3 relativeVelocity)
+    {
+        Matrix4x4 m = transform.localToWorldMatrix;
+        go.transform.position = m.MultiplyPoint(relativePosition);
+        go.transform.rotation = Quaternion.LookRotation(m.MultiplyVector(relativeFwd),
+                                              m.MultiplyVector(relativeUp));
+        go.GetComponent<Rigidbody>().velocity = m.MultiplyVector(relativeVelocity);
+    }
+
 }

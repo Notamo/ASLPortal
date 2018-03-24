@@ -67,7 +67,6 @@ public class MyWorld : MonoBehaviour {
         //Link Portal Source
         if (Input.GetKeyDown(KeyCode.T))
         {
-            Debug.Log("Testing for portal hit src");
             RaycastHit hit;
             Physics.Raycast(new Ray(mainCamera.transform.position, mainCamera.transform.forward), out hit);
 
@@ -81,7 +80,6 @@ public class MyWorld : MonoBehaviour {
         //Link Portal Dest
         if (Input.GetKeyDown(KeyCode.Y))
         {
-            Debug.Log("Testing for portal hit dest");
             RaycastHit hit;
             Physics.Raycast(new Ray(mainCamera.transform.position, mainCamera.transform.forward), out hit);
 
@@ -95,9 +93,7 @@ public class MyWorld : MonoBehaviour {
         //Link Portal
         if (Input.GetKeyDown(KeyCode.U))
         {
-            Debug.Log("u pressed");
             if (src != -1 && dest != -1) {
-                Debug.Log("req link portal");
                 portalMgr.RequestLinkPortal(src, dest);
             }
         }
@@ -109,7 +105,7 @@ public class MyWorld : MonoBehaviour {
 
         //some reference objects
         Plane = objManager.InstantiateOwnedObject(PlaneName);
-        //plane.transform.SetParent(transform);
+        //Plane.transform.SetParent(transform);
         Plane.transform.localPosition = Vector3.zero;
 
         GameObject reference = objManager.InstantiateOwnedObject("Cube");
@@ -158,7 +154,7 @@ public class MyWorld : MonoBehaviour {
             portalMgr.RequestRegisterPortal(portal);
         else
         {
-            Debug.LogError("Object is not a portal! cannot register!");
+            Debug.LogError("Object [" + portalGO.name + "] is not a portal! cannot register!");
         }
     }
 }

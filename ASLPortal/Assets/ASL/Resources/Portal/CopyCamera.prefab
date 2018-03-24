@@ -22,7 +22,6 @@ GameObject:
   - component: {fileID: 20469521906038150}
   - component: {fileID: 124007260503783332}
   - component: {fileID: 92239295690433042}
-  - component: {fileID: 81243492928160622}
   m_Layer: 0
   m_Name: CopyCamera
   m_TagString: Untagged
@@ -79,13 +78,6 @@ Camera:
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
   m_StereoMirrorMode: 0
---- !u!81 &81243492928160622
-AudioListener:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1092014541888906}
-  m_Enabled: 1
 --- !u!92 &92239295690433042
 Behaviour:
   m_ObjectHideFlags: 1
