@@ -86,7 +86,7 @@ public class PortalManager : MonoBehaviour
         linkIDPair[1] = destID;
 
 
-        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_PORTAL_UNREG, linkIDPair, true, options);
+        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_PORTAL_LINK, linkIDPair, true, options);
     }
 
     public void RequestLinkPortal(int source, int destination)
