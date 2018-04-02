@@ -102,6 +102,14 @@ public class MyWorld : MonoBehaviour {
 
     private void MakeWorld()
     {
+        //If there is a World Manager, tell it to add the new object to the corresponding world
+        Debug.Log("adding GameObject to world manager");
+        //int ownerId = go.GetComponent<PhotonView>().ownerId;
+        int playerID = PhotonNetwork.player.ID;
+        //GameObject.Find("WorldManager").GetComponent<WorldManager>().AddToWorld(ownerId, go);
+        GameObject.Find("WorldManager").GetComponent<WorldManager>().AddWorld(playerID, gameObject);
+
+
 
         //some reference objects
         Plane = objManager.InstantiateOwnedObject(PlaneName);

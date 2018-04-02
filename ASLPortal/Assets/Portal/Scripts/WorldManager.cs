@@ -6,7 +6,7 @@ public class WorldManager : MonoBehaviour {
 
     public Dictionary<int, GameObject> worlds;
     public int myWorld = -1;
-    public int visibleWorld = -1;
+    //public int visibleWorld = -1;
 
     // Use this for initialization
     private void Awake()
@@ -81,8 +81,9 @@ public class WorldManager : MonoBehaviour {
         return worlds[playerID];
     }
 
-
+    //commented out for the time being
     #region WORLD_VISIBILITY
+    /*
     //set the layer the camera can see
     public bool SetVisibleWorld(int playerID)
     {
@@ -140,6 +141,6 @@ public class WorldManager : MonoBehaviour {
             SetGOVisible(child);
         }
     }
-
-    #endregion
+    */
+    #endregion  //commented ot for the time being
 }

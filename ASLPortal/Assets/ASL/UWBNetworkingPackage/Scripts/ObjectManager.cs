@@ -171,6 +171,12 @@ namespace UWBNetworkingPackage
             HandleLocalLogic(go);
             RegisterObjectCreation(go, prefabName);
 
+            /*WORLD MANAGER CODE*/
+            //If there is a World Manager, tell it to add the new object to the corresponding world
+            Debug.Log("adding GameObject to world manager");
+            int ownerId = go.GetComponent<PhotonView>().ownerId;
+            GameObject.Find("WorldManager").GetComponent<WorldManager>().AddToWorld(ownerId, go);
+
             return go;
         }
 
@@ -647,6 +653,11 @@ namespace UWBNetworkingPackage
             go.transform.localScale = scale;
 
             RegisterObjectCreation(go, prefabName);
+
+            //If there is a World Manager, tell it to add the new object to the corresponding world
+            Debug.Log("adding GameObject to world manager");
+            int ownerId = go.GetComponent<PhotonView>().ownerId;
+            GameObject.Find("WorldManager").GetComponent<WorldManager>().AddToWorld(ownerId, go);
 
             return go;
         }
