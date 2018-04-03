@@ -18,6 +18,7 @@ public class WorldManager : MonoBehaviour {
 
         objManager = GameObject.Find("ObjectInteractionManager").GetComponent<ObjectInteractionManager>();
         worlds = new Dictionary<int, World>();
+        PhotonNetwork.OnEventCall += OnEvent;
     }
 	
 	// Update is called once per frame
@@ -118,16 +119,24 @@ public class WorldManager : MonoBehaviour {
     //add it here too!
     private void ProcessWorldAdd(int worldId)
     {
+        Debug.Log("ProcessWorldAdd recieved");
+
         World world = PhotonView.Find(worldId).GetComponent<World>();
+        world.transform.parent = gameObject.transform;
         worlds.Add(worldId, world);
+
+        Debug.Log("World Added");
     }
     
     private void ProcessWorldSet(int worldId, int toSetId)
     {
+        Debug.Log("WorldSet Received");
         World world = worlds[worldId];
         GameObject toSet = PhotonView.Find(toSetId).gameObject;
 
         toSet.transform.parent = world.transform;
+
+        Debug.Log("World Set");
     }
 
     #endregion
