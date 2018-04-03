@@ -124,7 +124,7 @@ public class Portal : MonoBehaviour
 
     /*
      * Transforms for teleportation
-     * Similar to camera trnsforms -- needs refactoring
+     * Similar to camera trnsforms -- needs refactoring?
     */
     public void TeleportEnter(GameObject go)
     {

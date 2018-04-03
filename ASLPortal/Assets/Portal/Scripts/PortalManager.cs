@@ -32,11 +32,13 @@ public class PortalManager : MonoBehaviour
     /*
      * Instantiate and initialize the Portal Prefabs
      */
-    public void MakePortal(Vector3 position, Vector3 forward)
+    public Portal MakePortal(Vector3 position, Vector3 forward, Vector3 up)
     {
         GameObject newPortal = objManager.InstantiateOwnedObject("Portal") as GameObject;
         newPortal.transform.position = position;
-        newPortal.transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
+        newPortal.transform.rotation = Quaternion.LookRotation(forward, up);
+
+        return newPortal.GetComponent<Portal>();
     }
 
     /*

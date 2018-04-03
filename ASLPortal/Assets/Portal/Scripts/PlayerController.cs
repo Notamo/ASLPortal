@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour {
     private Rigidbody rigidBody = null;
 
     public Camera userCamera = null;
-    public MyWorld myWorld = null;
+    public MasterController controller = null;
 
 	// Use this for initialization
 	void Start () {
@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour {
         //Create Portal
         if(Input.GetKeyDown(KeyCode.P))
         {
-            if(myWorld != null)
+            if(controller != null)
             {
                 RaycastHit hit;
                 Physics.Raycast(new Ray(userCamera.transform.position, userCamera.transform.forward), out hit);
@@ -37,7 +37,7 @@ public class PlayerController : MonoBehaviour {
 
                     Vector3 portalForward = userCamera.transform.forward;
                     portalForward.y = 0;
-                    myWorld.PlayerCreatePortal(hit.point, portalForward);
+                    controller.PlayerCreatePortal(hit.point, portalForward);
 
                 }
             }
@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour {
         //Register Portal
         if(Input.GetKeyDown(KeyCode.R))
         {
-            if (myWorld != null)
+            if (controller != null)
             {
                 RaycastHit hit;
                 var mask = 1 << LayerMask.NameToLayer("Portals");
@@ -58,7 +58,7 @@ public class PlayerController : MonoBehaviour {
 
                 if (hit.collider != null)
                 {
-                    myWorld.PlayerRegisterPortal(hit.collider.gameObject);
+                    controller.PlayerRegisterPortal(hit.collider.gameObject);
                 }
             }
         }

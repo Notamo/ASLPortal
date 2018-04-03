@@ -4,67 +4,55 @@ using UnityEngine;
 
 using ASL.Manipulation.Objects;
 
-public class MyWorld : MonoBehaviour {
-    public bool MasterClient = false;
+public class MasterController : MonoBehaviour {
 
-    public PortalManager portalMgr = null;
+    
+    public bool masterClient = false;
+
+    public PortalManager portalManager = null;
     public Camera mainCamera = null;
 
-    private GameObject playerAvatar = null;
+    public GameObject playerAvatar = null;
     public string AvatarName = "MasterAvatar";
     public Vector3 SpawnPos = new Vector3(0, 1, 0);
+    public int SpawnWorldIdx = 0;
 
-    private GameObject Plane = null;
-    public string PlaneName = "GreenPlane";
+    public WorldManager worldManager = null;
+    public List<string> worldPrefabs;
 
-    private bool portalMade = false;
-    private bool worldMade = false;
-    private bool avatarMade = false;
-    private bool pairMade = false;
     private ObjectInteractionManager objManager;
 
-
+    private bool setupComplete = false;
     //UI
     public SourceDestPanel linkPanel = null;
     int src = -1;
     int dest = -1;
 
     // Use this for initialization
-    void Awake () {
-        Debug.Assert(portalMgr != null);
-        Debug.Assert(mainCamera != null);
-        Debug.Assert(linkPanel != null);
-
+    void Start () {
+        Debug.Assert(worldManager != null);
+        Debug.Assert(portalManager != null);
         objManager = GameObject.Find("ObjectInteractionManager").GetComponent<ObjectInteractionManager>();
     }
+	
+	// Update is called once per frame
+	void Update () {
 
-    private void Start()
-    {
-        //worldMgr.AddWorld(PhotonNetwork.player.ID, gameObject);
-    }
-
-    // Update is called once per frame
-    void Update () {
-
-       /* if(Input.GetKeyDown(KeyCode.M))
+        //Do Setup
+        if (Input.GetKeyDown(KeyCode.L))
         {
-            if(!avatarMade && PhotonNetwork.inRoom)
+            if (!setupComplete && PhotonNetwork.inRoom)
             {
+                if (masterClient){
+                    worldManager.CreateDefaultWorlds();
+                }
+
                 MakeAvatar();
-                avatarMade = true;
-            }
-        }
-        //only the master Client can make the world resources
-        if (Input.GetKeyDown(KeyCode.L) && MasterClient)
-        {
-            if (!worldMade && PhotonNetwork.inRoom)  //maybe we can trigger this instead
-            {
-                MakeWorld();
-                worldMade = true;
+                setupComplete = true;
             }
         }
 
-        
+
         //Link Portal Source
         if (Input.GetKeyDown(KeyCode.T))
         {
@@ -94,63 +82,41 @@ public class MyWorld : MonoBehaviour {
         //Link Portal
         if (Input.GetKeyDown(KeyCode.U))
         {
-            if (src != -1 && dest != -1) {
-                portalMgr.RequestLinkPortal(src, dest);
+            if (src != -1 && dest != -1)
+            {
+                portalManager.RequestLinkPortal(src, dest);
             }
-        }*/
-
+        }
     }
 
-  /*  private void MakeWorld()
-    {
-        //If there is a World Manager, tell it to add the new object to the corresponding world
-        //Debug.Log("adding World to WorldManager");
-        //int playerID = PhotonNetwork.player.ID;
-        //GameObject.Find("WorldManager").GetComponent<WorldManager>().AddWorld(playerID, gameObject);
-
-
-
-        //some reference objects
-        Plane = objManager.InstantiateOwnedObject(PlaneName);
-        //Plane.transform.SetParent(transform);
-        Plane.transform.localPosition = Vector3.zero;
-
-        GameObject reference = objManager.InstantiateOwnedObject("Cube");
-        //reference.transform.SetParent(transform);
-        reference.transform.localPosition = new Vector3(0, 0.5f, 0);
-
-        UWBNetworkingPackage.NetworkManager nm = GameObject.Find("NetworkManager").GetComponent<UWBNetworkingPackage.NetworkManager>();
-        int myID = PhotonNetwork.player.ID;
-        List<int> IDsToAdd = new List<int>();
-        IDsToAdd.Add(myID);
-        nm.WhiteListOwnership(Plane, IDsToAdd);
-    }*/
-
-        /*
+    //Make Avatar
     private void MakeAvatar()
     {
         //make the user avatar/camera
         playerAvatar = objManager.InstantiateOwnedObject("UserAvatar") as GameObject;
         playerAvatar.name = AvatarName;
-        
+
+        World world = GameObject.Find("RedCubeWorld").GetComponent<World>();
+        worldManager.AddToWorld(world, playerAvatar);
 
         playerAvatar.transform.localPosition = SpawnPos;
         mainCamera.transform.SetParent(playerAvatar.transform);
         mainCamera.transform.localPosition = .5f * playerAvatar.transform.up;
 
-        //add the player controller after so other players can't manipulate this
+        //add the player controller after so other players can't manipulate it
         PlayerController pc = playerAvatar.AddComponent<PlayerController>() as PlayerController;
         pc.userCamera = mainCamera;
-        pc.myWorld = this;
+        pc.controller = this;
 
-        portalMgr.player = playerAvatar;
+        portalManager.player = playerAvatar;
     }
+
 
     //PlayerCreatePortal
     //Try to create a portal where the player camera is looking at on the plane
     public void PlayerCreatePortal(Vector3 position, Vector3 forward)
     {
-        portalMgr.MakePortal(position, forward);
+        portalManager.MakePortal(position, forward, Vector3.up);
     }
 
     //PlayerRegisterPortal
@@ -158,11 +124,11 @@ public class MyWorld : MonoBehaviour {
     public void PlayerRegisterPortal(GameObject portalGO)
     {
         Portal portal = portalGO.GetComponent<Portal>();
-        if(portal != null)
-            portalMgr.RequestRegisterPortal(portal);
+        if (portal != null)
+            portalManager.RequestRegisterPortal(portal);
         else
         {
             Debug.LogError("Object [" + portalGO.name + "] is not a portal! cannot register!");
         }
-    }*/
+    }
 }
