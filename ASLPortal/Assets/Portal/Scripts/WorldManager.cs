@@ -53,7 +53,7 @@ public class WorldManager : MonoBehaviour {
 
         RaiseEventOptions options = new RaiseEventOptions();
         options.Receivers = ReceiverGroup.Others;
-        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_WORLD_ADD_TO, worldId, true, options);
+        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_WORLD_ADD, worldId, true, options);
     }
 
     //Set an object as a child of a world
