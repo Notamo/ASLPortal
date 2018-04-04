@@ -31,7 +31,7 @@ public class PortalSelector : MonoBehaviour {
         this.playerCam = playerCam;
         this.sourcePortal = sourcePortal;
         sourcePortalID = this.sourcePortal.GetComponent<PhotonView>().viewID;
-
+        destPortalID = sourcePortalID;
         //ChangeDestination();
     }
 	

@@ -368,6 +368,9 @@ public class PortalManager : MonoBehaviour
     public int GetNextPortalId(int portalID)
     {
         IEnumerable<int> keys = portalSet.Keys;
+        Debug.Log("first: " + keys.First());
+        Debug.Log("last: " + keys.Last());
+        Debug.Log("portal: " + portalID);
         
         if (!portalSet.ContainsKey(portalID) || keys.Last() == portalID)
             return keys.First();
