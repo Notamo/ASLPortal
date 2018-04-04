@@ -19,7 +19,8 @@ public class MasterController : MonoBehaviour {
     //Player
     public GameObject playerAvatar = null;
     public string AvatarName = "MasterAvatar";
-    public Vector3 SpawnPos = new Vector3(0, 1, 0);
+    public Color AvatarColor = Color.white;
+    public Vector3 SpawnPosition = new Vector3(0, 1, 0);
 
     //Worlds
     public List<string> worldPrefabs;
@@ -110,17 +111,18 @@ public class MasterController : MonoBehaviour {
         playerAvatar = objManager.InstantiateOwnedObject("UserAvatar") as GameObject;
         playerAvatar.name = AvatarName;
 
-        World world = GameObject.Find("RedCubeWorld").GetComponent<World>();
-        worldManager.AddToWorld(world, playerAvatar);
-
-        playerAvatar.transform.localPosition = SpawnPos;
+        playerAvatar.transform.localPosition = SpawnPosition;
         mainCamera.transform.SetParent(playerAvatar.transform);
         mainCamera.transform.localPosition = .5f * playerAvatar.transform.up;
+
+        World world = worldManager.getWorldByName("RedCubeWorld");
+        worldManager.AddToWorld(world, playerAvatar);
 
         //add the player controller after so other players can't manipulate it
         PlayerController pc = playerAvatar.AddComponent<PlayerController>() as PlayerController;
         pc.userCamera = mainCamera;
         pc.controller = this;
+        pc.SetColor(AvatarColor);
 
         portalManager.player = playerAvatar;
     }

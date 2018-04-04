@@ -18,6 +18,11 @@ public class PlayerController : MonoBehaviour {
         rigidBody = GetComponent<Rigidbody>();
         Debug.Assert(rigidBody != null);
 	}
+
+    public void SetColor(Color toSet)
+    {
+        GetComponent<MeshRenderer>().material.color = toSet;
+    }
 	
 	// Update is called once per frame
 	void Update () {

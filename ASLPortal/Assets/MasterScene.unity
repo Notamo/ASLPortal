@@ -159,7 +159,8 @@ MonoBehaviour:
   playerAvatar: {fileID: 1249044546244228, guid: bc029581ebca61141a6c761101a6762d,
     type: 2}
   AvatarName: MasterAvatar
-  SpawnPos: {x: 0, y: 1, z: 0}
+  AvatarColor: {r: 1, g: 1, b: 1, a: 1}
+  SpawnPosition: {x: 0, y: 1, z: 0}
   worldPrefabs:
   - RedCubeWorld
   - GreenCubeWorld
