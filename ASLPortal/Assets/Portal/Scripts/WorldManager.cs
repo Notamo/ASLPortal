@@ -33,7 +33,8 @@ public class WorldManager : MonoBehaviour {
         }
     }
 
-    
+    //Create a new world by prefab name
+    //and add it
     public void CreateWorld(string prefabName)
     {
         Debug.Log("making world: " + prefabName);
@@ -43,6 +44,7 @@ public class WorldManager : MonoBehaviour {
         AddWorld(world);
     }
 
+    //Add a world to the dictionary to be managed
     private void AddWorld(World world)
     {
         int worldId = world.GetComponent<PhotonView>().viewID;
@@ -115,28 +117,23 @@ public class WorldManager : MonoBehaviour {
     }
 
 
-    //someone else added a world
+    //The master client added a world
     //add it here too!
     private void ProcessWorldAdd(int worldId)
     {
-        Debug.Log("ProcessWorldAdd recieved");
-
         World world = PhotonView.Find(worldId).GetComponent<World>();
         world.transform.parent = gameObject.transform;
         worlds.Add(worldId, world);
-
-        Debug.Log("World Added");
     }
     
+    //An object's world was set,
+    //set it here too
     private void ProcessWorldSet(int worldId, int toSetId)
     {
-        Debug.Log("WorldSet Received");
         World world = worlds[worldId];
         GameObject toSet = PhotonView.Find(toSetId).gameObject;
 
         toSet.transform.parent = world.transform;
-
-        Debug.Log("World Set");
     }
 
     #endregion
