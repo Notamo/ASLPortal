@@ -115,7 +115,7 @@ public class MasterController : MonoBehaviour {
         mainCamera.transform.SetParent(playerAvatar.transform);
         mainCamera.transform.localPosition = .5f * playerAvatar.transform.up;
 
-        World world = worldManager.getWorldByName("RedCubeWorld");
+        World world = worldManager.getWorldByName("HubWorld");
         worldManager.AddToWorld(world, playerAvatar);
 
         //add the player controller after so other players can't manipulate it

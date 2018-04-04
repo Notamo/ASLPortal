@@ -7,7 +7,7 @@ public class World : MonoBehaviour {
     public PortalManager portalManager = null;
     public WorldManager worldManager = null;
     public Transform defaultPortalXform = null;
-    private Portal defaultPortal = null;
+    public Portal defaultPortal = null;
 
     void Awake()
     {
@@ -22,6 +22,7 @@ public class World : MonoBehaviour {
 	void Start () {
         //instantiate a portal as well if we are the master client
         if(controller.masterClient &&
+            PhotonNetwork.inRoom &&
            defaultPortalXform != null)
         {
             defaultPortal = portalManager.MakePortal(defaultPortalXform.position, defaultPortalXform.forward, defaultPortalXform.up);
