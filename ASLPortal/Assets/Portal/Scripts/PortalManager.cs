@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using ASL.Manipulation.Objects;
+using System.Linq;
 
 public class PortalManager : MonoBehaviour
 {
@@ -345,5 +346,39 @@ public class PortalManager : MonoBehaviour
     private bool IsIDRegistered(int id)
     {
         return portalSet.ContainsKey(id);
+    }
+
+    public Portal GetPortal(int portalID)
+    {
+        return portalSet[portalID];
+    }
+
+    public Dictionary<int, Portal>.KeyCollection GetPortalIDs(int portalID)
+    {
+        return portalSet.Keys;
+    }
+
+    public Portal GetNextPortal(int portalID)
+    {
+        int id = GetNextPortalId(portalID);
+        //if (id < 0) return null;
+        return portalSet[id];
+    }
+
+    public int GetNextPortalId(int portalID)
+    {
+        IEnumerable<int> keys = portalSet.Keys;
+        
+        if (!portalSet.ContainsKey(portalID) || keys.Last() == portalID)
+            return keys.First();
+
+        IEnumerator<int> keyEnumerator = keys.GetEnumerator();
+        while (keyEnumerator.Current != portalID)
+        {
+            keyEnumerator.MoveNext();
+        }
+
+        keyEnumerator.MoveNext();
+        return keyEnumerator.Current;
     }
 }

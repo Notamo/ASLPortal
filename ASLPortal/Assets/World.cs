@@ -9,7 +9,7 @@ public class World : MonoBehaviour {
     public Transform defaultPortalXform = null;
     public Portal defaultPortal = null;
 
-    void Awake()
+    public virtual void Awake()
     {
         controller = GameObject.Find("MasterController").GetComponent<MasterController>();
         portalManager = GameObject.Find("PortalManager").GetComponent<PortalManager>();
@@ -19,7 +19,7 @@ public class World : MonoBehaviour {
         Debug.Assert(worldManager != null);
     }
 	// Use this for initialization
-	void Start () {
+	public virtual void Start () {
         //instantiate a portal as well if we are the master client
         if(controller.masterClient &&
             PhotonNetwork.inRoom &&

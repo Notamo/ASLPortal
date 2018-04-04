@@ -26,7 +26,9 @@ public class Portal : MonoBehaviour
         userCamera = user.GetComponent<PlayerController>().userCamera;
 
         //set up the copy camera
-        copyCamera = Instantiate(copyCameraPrefab, transform).GetComponent<Camera>();
+        if(copyCamera == null)
+            copyCamera = Instantiate(copyCameraPrefab, transform).GetComponent<Camera>();
+
         if (copyCamera.targetTexture != null) copyCamera.targetTexture.Release();
         copyCamera.targetTexture = new RenderTexture(Screen.width, Screen.height, 24);
 
