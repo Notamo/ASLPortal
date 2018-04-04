@@ -5,46 +5,51 @@ using UnityEngine;
 using ASL.Manipulation.Objects;
 
 public class MasterController : MonoBehaviour {
-
-    
+    //are we the master client?
     public bool masterClient = false;
 
+    //core components
+    public ObjectInteractionManager objManager = null;
     public PortalManager portalManager = null;
+    public WorldManager worldManager = null;
+
+    //the main camera (for raycasting, and attaching to the player)
     public Camera mainCamera = null;
 
+    //Player
     public GameObject playerAvatar = null;
     public string AvatarName = "MasterAvatar";
     public Vector3 SpawnPos = new Vector3(0, 1, 0);
-    public int SpawnWorldIdx = 0;
 
-    public WorldManager worldManager = null;
+    //Worlds
     public List<string> worldPrefabs;
 
-    private ObjectInteractionManager objManager;
-
-    private bool setupComplete = false;
     //UI
     public SourceDestPanel linkPanel = null;
     int src = -1;
     int dest = -1;
+    
+    //Setup State
+    private bool setupComplete = false;
+
 
     // Use this for initialization
     void Start () {
+        objManager = GameObject.Find("ObjectInteractionManager").GetComponent<ObjectInteractionManager>();
+        Debug.Assert(objManager != null);
         Debug.Assert(worldManager != null);
         Debug.Assert(portalManager != null);
-        objManager = GameObject.Find("ObjectInteractionManager").GetComponent<ObjectInteractionManager>();
     }
 	
 	// Update is called once per frame
 	void Update () {
-
         //Do Setup
         if (Input.GetKeyDown(KeyCode.L))
         {
             if (!setupComplete && PhotonNetwork.inRoom)
             {
                 if (masterClient){
-                    worldManager.CreateDefaultWorlds();
+                    CreateDefaultWorlds();
                 }
 
                 MakeAvatar();
@@ -66,7 +71,7 @@ public class MasterController : MonoBehaviour {
             linkPanel.setSourceID(src);
         }
 
-        //Link Portal Dest
+        //Link Portal Destination
         if (Input.GetKeyDown(KeyCode.Y))
         {
             RaycastHit hit;
@@ -86,6 +91,15 @@ public class MasterController : MonoBehaviour {
             {
                 portalManager.RequestLinkPortal(src, dest);
             }
+        }
+    }
+
+    //Create the Worlds that will exist from the outset
+    private void CreateDefaultWorlds()
+    {
+        foreach(string worldPrefab in worldPrefabs)
+        {
+            worldManager.CreateWorld(worldPrefab);
         }
     }
 

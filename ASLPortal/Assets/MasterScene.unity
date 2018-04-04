@@ -152,15 +152,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   masterClient: 1
+  objManager: {fileID: 778688546}
   portalManager: {fileID: 521520601}
+  worldManager: {fileID: 544202706}
   mainCamera: {fileID: 1875337323}
   playerAvatar: {fileID: 1249044546244228, guid: bc029581ebca61141a6c761101a6762d,
     type: 2}
   AvatarName: MasterAvatar
   SpawnPos: {x: 0, y: 1, z: 0}
-  SpawnWorldIdx: 1
-  worldManager: {fileID: 544202706}
-  worldPrefabs: []
+  worldPrefabs:
+  - RedCubeWorld
+  - GreenCubeWorld
+  - BlueCubeWorld
   linkPanel: {fileID: 439690535}
 --- !u!224 &174584114
 RectTransform:
@@ -405,10 +408,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 585487943e62fd841987d4d1a702dea8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  worldPrefabs:
-  - RedCubeWorld
-  - GreenCubeWorld
-  - BlueCubeWorld
+  worldPrefabs: []
+  masterClient: 0
 --- !u!4 &544202707
 Transform:
   m_ObjectHideFlags: 0
@@ -542,6 +543,12 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ab49d762ed2b96843811cf966a0b7279, type: 2}
   m_IsPrefabParent: 0
+--- !u!114 &778688546 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114130710415470774, guid: ab49d762ed2b96843811cf966a0b7279,
+    type: 2}
+  m_PrefabInternal: {fileID: 778688545}
+  m_Script: {fileID: 11500000, guid: 25349e5e806d55941bb13bbfb52da8d3, type: 3}
 --- !u!1 &1274916054
 GameObject:
   m_ObjectHideFlags: 0

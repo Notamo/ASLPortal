@@ -15,8 +15,9 @@ public class WorldManager : MonoBehaviour {
     // Use this for initialization
     private void Awake()
     {
-
         objManager = GameObject.Find("ObjectInteractionManager").GetComponent<ObjectInteractionManager>();
+        Debug.Assert(objManager != null);
+
         worlds = new Dictionary<int, World>();
         PhotonNetwork.OnEventCall += OnEvent;
     }
@@ -24,14 +25,6 @@ public class WorldManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	}
-
-    public void CreateDefaultWorlds()
-    {
-        foreach (string worldName in worldPrefabs)
-        {
-            CreateWorld(worldName);
-        }
-    }
 
     //Create a new world by prefab name
     //and add it
