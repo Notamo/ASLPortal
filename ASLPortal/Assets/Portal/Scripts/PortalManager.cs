@@ -184,8 +184,15 @@ public class PortalManager : MonoBehaviour
         {
             if (IsIDRegistered(sourceID) && IsIDRegistered(destinationID))
             {
+                if (portalSet[sourceID].destinationPortal != null)
+                    UnlinkPortal(sourceID);
+
+                if (portalSet[destinationID].destinationPortal != null)
+                    UnlinkPortal(destinationID);
+
                 portalSet[sourceID].Initialize(portalSet[destinationID], player);
                 portalSet[destinationID].Initialize(portalSet[sourceID], player);
+
                 return true;
             }
             else
@@ -198,8 +205,27 @@ public class PortalManager : MonoBehaviour
 
     private bool UnlinkPortal(int sourceID)
     {
-        //ignore for now
-        return false;
+        if (!player)
+        {
+            Debug.LogError("Cannot Unlink Portal! No player object available");
+            return false;
+        }
+        else
+        {
+            if (IsIDRegistered(sourceID))
+            {
+                if (portalSet[sourceID].destinationPortal != null)
+                {
+                    portalSet[sourceID].Close();
+                }
+                return true;
+            }
+            else
+            {
+                Debug.Log("Cannot Unlink Portal! Source not registered");
+                return false;
+            }
+        }
     }
 
     #region EVENT_PROCESSING
