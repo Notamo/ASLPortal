@@ -32,6 +32,7 @@ public class PortalSelector : MonoBehaviour {
         this.sourcePortal = sourcePortal;
         sourcePortalID = this.sourcePortal.GetComponent<PhotonView>().viewID;
         destPortalID = sourcePortalID;
+        portalManager.RequestLinkPortal(sourcePortalID, destPortalID);
         //ChangeDestination();
     }
 	
@@ -45,7 +46,7 @@ public class PortalSelector : MonoBehaviour {
                 RaycastHit hit;
                 Ray ray = playerCam.ScreenPointToRay(Input.mousePosition);
                 Physics.Raycast(ray, out hit, 100f);
-                if (hit.collider.gameObject == button)
+                if (hit.collider != null && hit.collider.gameObject == button)
                 {
                     Debug.Log("Ray hit button!");
                     ChangeDestination();

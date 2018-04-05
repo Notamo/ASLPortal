@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -26,12 +27,11 @@ public class Portal : MonoBehaviour
         userCamera = user.GetComponent<PlayerController>().userCamera;
 
         //set up the copy camera
-        if(copyCamera == null)
+        if (copyCamera == null)
             copyCamera = Instantiate(copyCameraPrefab, transform).GetComponent<Camera>();
 
         if (copyCamera.targetTexture != null) copyCamera.targetTexture.Release();
         copyCamera.targetTexture = new RenderTexture(Screen.width, Screen.height, 24);
-
 
         //Set up the material to reference the copy camera's rendertexture
         Material camMat = new Material(copyCamMat);
@@ -94,7 +94,7 @@ public class Portal : MonoBehaviour
             Vector3 objectOffset = m.MultiplyPoint(userCamera.transform.position);
 
             //Vector3 objectOffset = go.transform.position - transform.position;
-            bool playerInFront = Vector3.Dot(transform.forward, objectOffset) < 0.0f;
+            bool playerInFront = objectOffset.z < 0.0f;
 
             //is object moving towards the portal
             Vector3 objVelocity = go.GetComponent<Rigidbody>().velocity;
@@ -103,7 +103,7 @@ public class Portal : MonoBehaviour
             //is object in front of the portal
             if (playerInFront)
             {
-                if (movingTowards)
+                if (movingTowards || objVelocity == Vector3.zero)
                 {
                     TeleportEnter(go);
                 }
@@ -158,4 +158,22 @@ public class Portal : MonoBehaviour
         go.GetComponent<Rigidbody>().velocity = m.MultiplyVector(relativeVelocity);
     }
 
+    public void Close()
+    {
+        // Destroy copy cameras
+        if (copyCamera != null)
+        {
+            Destroy(copyCamera.gameObject);
+            copyCamera = null;
+        }
+        if (destinationPortal.copyCamera != null)
+        {
+            Destroy(destinationPortal.copyCamera.gameObject);
+            destinationPortal.copyCamera = null;
+        }
+
+        // Close destination portal
+        destinationPortal.destinationPortal = null;
+        destinationPortal = null;
+    }
 }
