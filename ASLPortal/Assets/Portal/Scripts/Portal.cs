@@ -73,7 +73,7 @@ public class Portal : MonoBehaviour
             copyCamera.transform.rotation = destinationPortal.transform.rotation * rot;
 
             // Calculate clip plane for portal (for culling of objects inbetween destination camera and portal)
-            Vector4 clipPlaneWorldSpace = new Vector4(destinationPortal.transform.forward.x, destinationPortal.transform.forward.y, destinationPortal.transform.forward.z, -Vector3.Dot(destinationPortal.transform.localPosition, destinationPortal.transform.forward));
+            Vector4 clipPlaneWorldSpace = new Vector4(destinationPortal.transform.forward.x, destinationPortal.transform.forward.y, destinationPortal.transform.forward.z, -Vector3.Dot(destinationPortal.transform.position, destinationPortal.transform.forward));
             Vector4 clipPlaneCameraSpace = Matrix4x4.Transpose(Matrix4x4.Inverse(copyCamera.worldToCameraMatrix)) * clipPlaneWorldSpace;
 
             // Update projection based on new clip plane
