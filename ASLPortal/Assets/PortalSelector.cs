@@ -10,7 +10,6 @@ public class PortalSelector : MonoBehaviour {
     private int destPortalID = -1;
     public Camera playerCam = null;         //for raycasting select
     public PortalManager portalManager = null;
-    private Dictionary<int, Portal>.Enumerator portalEnumerator;
 
     private bool initialized = false;
 
@@ -23,7 +22,7 @@ public class PortalSelector : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+
 	}
 
     public void Initialize(Camera playerCam, Portal sourcePortal)
@@ -32,16 +31,17 @@ public class PortalSelector : MonoBehaviour {
         this.sourcePortal = sourcePortal;
         sourcePortalID = this.sourcePortal.GetComponent<PhotonView>().viewID;
         destPortalID = sourcePortalID;
-        portalManager.RequestLinkPortal(sourcePortalID, destPortalID);
-        //ChangeDestination();
     }
 	
 	// Update is called once per frame
 	void Update () {
         if (sourcePortal != null && playerCam != null)
         {
+            transform.position = sourcePortal.transform.position - 1.5f * sourcePortal.transform.right;
+            transform.forward = sourcePortal.transform.forward;
+
             //left mouse click
-            if(Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0))
             {
                 RaycastHit hit;
                 Ray ray = playerCam.ScreenPointToRay(Input.mousePosition);
@@ -63,6 +63,5 @@ public class PortalSelector : MonoBehaviour {
 
         destPortalID = portalManager.GetNextPortalId(destPortalID);
         portalManager.RequestLinkPortal(sourcePortalID, destPortalID);
-          
     }
 }

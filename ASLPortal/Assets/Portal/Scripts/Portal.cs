@@ -36,7 +36,7 @@ public class Portal : MonoBehaviour
         //Set up the material to reference the copy camera's rendertexture
         Material camMat = new Material(copyCamMat);
         camMat.mainTexture = copyCamera.targetTexture;
-        other.renderQuad.GetComponent<MeshRenderer>().material = camMat;
+        renderQuad.GetComponent<MeshRenderer>().material = camMat;
     }
 
     // Update is called once per frame
@@ -46,14 +46,16 @@ public class Portal : MonoBehaviour
         //relative positions and orientations to the this portal
         if (destinationPortal != null && userCamera != null)
         {
-            Matrix4x4 m = transform.worldToLocalMatrix;
-            Vector3 playerOffset = m.MultiplyPoint(userCamera.transform.position);
-            Vector3 relativePlayerFwd = m.MultiplyVector(userCamera.transform.forward);
-            Vector3 relativePlayerUp = m.MultiplyVector(userCamera.transform.up);
+            // Calculate matrix for world to local, reflected across portal
+            Matrix4x4 destinationFlipRotation = Matrix4x4.TRS(Vector3.zero, Quaternion.AngleAxis(180.0f, Vector3.up), Vector3.one);
+            Matrix4x4 worldToLocal = destinationFlipRotation * transform.worldToLocalMatrix;
 
-            destinationPortal.UpdateCopyCamera(FlipLocalVector(playerOffset), 
-                                               FlipLocalVector(relativePlayerFwd), 
-                                               FlipLocalVector(relativePlayerUp));
+            // Calculate portal cams pos and rot in this portal space
+            Vector3 camPosInSourceSpace = worldToLocal.MultiplyPoint(userCamera.transform.position);
+            Quaternion camRotInSourceSpace = Quaternion.LookRotation(worldToLocal.GetColumn(2), worldToLocal.GetColumn(1)) * userCamera.transform.rotation;
+
+            // Set portal cam relative to destination portal
+            UpdateCopyCamera(camPosInSourceSpace, camRotInSourceSpace);
         }
     }
 
@@ -62,16 +64,20 @@ public class Portal : MonoBehaviour
 
     //Update the copy camera to match the given
     //relative position and orientations
-    public void UpdateCopyCamera(Vector3 cameraOffset, Vector3 relativeCameraFwd, Vector3 relativeCameraUp)
+    public void UpdateCopyCamera(Vector3 pos, Quaternion rot)
     {
         if (copyCamera != null && destinationPortal != null)
         {
-            Matrix4x4 m = transform.localToWorldMatrix;
+            // Transform position and rotation to this portal's space
+            copyCamera.transform.position = destinationPortal.transform.TransformPoint(pos);
+            copyCamera.transform.rotation = destinationPortal.transform.rotation * rot;
 
-            copyCamera.transform.position = m.MultiplyPoint(cameraOffset);
-            copyCamera.transform.rotation = 
-                Quaternion.LookRotation(m.MultiplyVector(relativeCameraFwd),
-                                        m.MultiplyVector(relativeCameraUp));
+            // Calculate clip plane for portal (for culling of objects inbetween destination camera and portal)
+            Vector4 clipPlaneWorldSpace = new Vector4(destinationPortal.transform.forward.x, destinationPortal.transform.forward.y, destinationPortal.transform.forward.z, -Vector3.Dot(destinationPortal.transform.position, destinationPortal.transform.forward));
+            Vector4 clipPlaneCameraSpace = Matrix4x4.Transpose(Matrix4x4.Inverse(copyCamera.worldToCameraMatrix)) * clipPlaneWorldSpace;
+
+            // Update projection based on new clip plane
+            copyCamera.projectionMatrix = userCamera.CalculateObliqueMatrix(clipPlaneCameraSpace);
         }
     }
 
@@ -91,14 +97,14 @@ public class Portal : MonoBehaviour
             Debug.Log("Destination: " + destinationPortal.GetComponent<PhotonView>().viewID.ToString());
 
             Matrix4x4 m = transform.worldToLocalMatrix;
-            Vector3 objectOffset = m.MultiplyPoint(userCamera.transform.position);
+            Vector3 objectOffset = m.MultiplyPoint(go.transform.position);
 
             //Vector3 objectOffset = go.transform.position - transform.position;
-            bool playerInFront = objectOffset.z < 0.0f;
+            bool playerInFront = objectOffset.z > 0.0f;
 
             //is object moving towards the portal
             Vector3 objVelocity = go.GetComponent<Rigidbody>().velocity;
-            bool movingTowards = Vector3.Dot(transform.forward, objVelocity) > 0.0f;
+            bool movingTowards = Vector3.Dot(transform.forward, objVelocity) < 0.0f;
 
             //is object in front of the portal
             if (playerInFront)
@@ -130,31 +136,28 @@ public class Portal : MonoBehaviour
     */
     public void TeleportEnter(GameObject go)
     {
-        Matrix4x4 m = transform.worldToLocalMatrix;
+        Matrix4x4 destinationFlipRotation = Matrix4x4.TRS(Vector3.zero, Quaternion.AngleAxis(180.0f, Vector3.up), Vector3.one);
+        Matrix4x4 m = destinationFlipRotation * transform.worldToLocalMatrix;
 
-        Vector3 objectOffset =           m.MultiplyPoint(go.transform.position);  
-        Vector3 relativeObjectFwd =      m.MultiplyVector(go.transform.forward);
-        Vector3 relativeObjectUp =       m.MultiplyVector(go.transform.up);
-        Vector3 relativeObjectVelocity = m.MultiplyVector(go.GetComponent<Rigidbody>().velocity);
+        Vector3 posInSourceSpace = m.MultiplyPoint(go.transform.position);
+        Quaternion rotInSourceSpace = Quaternion.LookRotation(m.GetColumn(2), m.GetColumn(1)) * go.transform.rotation;
+        Vector3 velInSourceSpace = m.MultiplyVector(go.GetComponent<Rigidbody>().velocity);
 
         destinationPortal.TeleportExit(go,
-                                       FlipLocalVector(objectOffset),
-                                       FlipLocalVector(relativeObjectFwd),
-                                       FlipLocalVector(relativeObjectUp),
-                                       FlipLocalVector(relativeObjectVelocity));    //I think we actually need to stick with flip local vector for this one
+                                       posInSourceSpace,
+                                       rotInSourceSpace,
+                                       velInSourceSpace);
 
     }
 
-    public void TeleportExit(GameObject go, 
-                            Vector3 relativePosition, 
-                            Vector3 relativeFwd, 
-                            Vector3 relativeUp, 
+    public void TeleportExit(GameObject go,
+                            Vector3 relativePosition,
+                            Quaternion relativeRotation,
                             Vector3 relativeVelocity)
     {
         Matrix4x4 m = transform.localToWorldMatrix;
         go.transform.position = m.MultiplyPoint(relativePosition);
-        go.transform.rotation = Quaternion.LookRotation(m.MultiplyVector(relativeFwd),
-                                              m.MultiplyVector(relativeUp));
+        go.transform.rotation = transform.rotation * relativeRotation;
         go.GetComponent<Rigidbody>().velocity = m.MultiplyVector(relativeVelocity);
     }
 
@@ -166,14 +169,11 @@ public class Portal : MonoBehaviour
             Destroy(copyCamera.gameObject);
             copyCamera = null;
         }
-        if (destinationPortal.copyCamera != null)
-        {
-            Destroy(destinationPortal.copyCamera.gameObject);
-            destinationPortal.copyCamera = null;
-        }
 
-        // Close destination portal
-        destinationPortal.destinationPortal = null;
+        // Unlink from dest portal
         destinationPortal = null;
+
+        // Release render texture reference
+        renderQuad.GetComponent<MeshRenderer>().material.mainTexture = null;
     }
 }

@@ -187,11 +187,7 @@ public class PortalManager : MonoBehaviour
                 if (portalSet[sourceID].destinationPortal != null)
                     UnlinkPortal(sourceID);
 
-                if (portalSet[destinationID].destinationPortal != null)
-                    UnlinkPortal(destinationID);
-
                 portalSet[sourceID].Initialize(portalSet[destinationID], player);
-                portalSet[destinationID].Initialize(portalSet[sourceID], player);
 
                 return true;
             }
