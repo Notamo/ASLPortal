@@ -10,7 +10,7 @@ using UnityEditor;
 public class PunStartup : MonoBehaviour
 {
     // paths to demo scenes to setup (if needed)
-    private const string demoBasePath = "Assets/Photon Unity Networking/Demos/";
+    private const string demoBasePath = "Assets/ASL/Photon Unity Networking/Demos/";
     private static string[] demoPaths =
         {
             "DemoHub/DemoHub-Scene-V2.unity",
