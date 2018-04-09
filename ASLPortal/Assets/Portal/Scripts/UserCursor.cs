@@ -3,6 +3,7 @@
 public class UserCursor : MonoBehaviour
 {
     private MeshRenderer meshRenderer;
+    private float rotation;
 
     // Use this for initialization
     void Start()
@@ -10,6 +11,7 @@ public class UserCursor : MonoBehaviour
         // Grab the mesh renderer that's on the same object as this script.
         meshRenderer = this.gameObject.GetComponentInChildren<MeshRenderer>();
         meshRenderer.enabled = false;
+        rotation = 0.0f;
     }
 
     public void HideCursor(bool hide)
@@ -46,7 +48,7 @@ public class UserCursor : MonoBehaviour
     }
 
     // Update is called once per frame
-    public void UpdateCursor()
+    public void UpdateCursor(Quaternion userRot)
     {
         // Do a raycast into the world based on the user's
         // head position and orientation.
@@ -67,5 +69,17 @@ public class UserCursor : MonoBehaviour
             // Rotate the cursor to hug the surface of the hologram.
             this.transform.rotation = Quaternion.FromToRotation(Vector3.up, hitInfo.normal);
         }
+
+        if(Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            rotation -= 45.0f;
+        }
+
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            rotation += 45.0f;
+        }
+        Vector3 f = Quaternion.AngleAxis(rotation, Vector3.up) * -Vector3.forward;
+        this.transform.rotation *= Quaternion.FromToRotation(-Vector3.forward, f);
     }
 }

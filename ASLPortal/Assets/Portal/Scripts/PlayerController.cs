@@ -49,14 +49,15 @@ public class PlayerController : MonoBehaviour {
         //Create/Register/Link Portals
         if (!mCursor.IsHidden())
         {
-            mCursor.UpdateCursor();
+            mCursor.UpdateCursor(transform.rotation);
 
             if (controller != null)
             {
                 //Create Portal
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    controller.PlayerCreatePortal(mCursor.transform.position + 0.01f * mCursor.transform.up, mCursor.transform.up);
+                    Vector3 pos = mCursor.transform.position + 0.01f * mCursor.transform.up;
+                    controller.PlayerCreatePortal(pos, mCursor.transform.up, -mCursor.transform.forward);
                 }
                 //Register Portal
                 if (Input.GetKeyDown(KeyCode.R))
