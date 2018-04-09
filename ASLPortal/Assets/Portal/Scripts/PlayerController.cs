@@ -13,37 +13,99 @@ public class PlayerController : MonoBehaviour {
     public Camera userCamera = null;
     public MasterController controller = null;
 
-	// Use this for initialization
-	void Start () {
+    private UserCursor mCursor = null;
+    int src = -1;
+    int dest = -1;
+
+    // Use this for initialization
+    void Start () {
         rigidBody = GetComponent<Rigidbody>();
         Debug.Assert(rigidBody != null);
-	}
+    }
 
     public void SetColor(Color toSet)
     {
         GetComponent<MeshRenderer>().material.color = toSet;
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    public void SetCursor(GameObject cursorPrefab)
+    {
+        mCursor = Instantiate(cursorPrefab, transform).GetComponent<UserCursor>();
+    }
+
+    // Update is called once per frame
+    void Update () {
         PlayerMovementControls();
 
-        //Create Portal
-        if(Input.GetKeyDown(KeyCode.P))
+        PlayerPortalControls();
+    }
+    private void PlayerPortalControls()
+    {
+        // Toggle cursor and controls
+        if (Input.GetKeyDown(KeyCode.P))
         {
-            if(controller != null)
+            mCursor.HideCursor(!mCursor.IsHidden());
+        }
+        //Create/Register/Link Portals
+        if (!mCursor.IsHidden())
+        {
+            mCursor.UpdateCursor(transform.rotation);
+
+            if (controller != null)
             {
-                RaycastHit hit;
-                Physics.Raycast(new Ray(userCamera.transform.position, userCamera.transform.forward), out hit);
-
-                if(hit.collider != null && hit.collider.gameObject.name == "GreenPlane")
+                //Create Portal
+                if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    Debug.Log("Plane Hit!");
-
-                    Vector3 portalForward = userCamera.transform.forward;
-                    portalForward.y = 0;
-                    controller.PlayerCreatePortal(hit.point, portalForward);
-
+                    Vector3 pos = mCursor.transform.position + 0.01f * mCursor.transform.up;
+                    controller.PlayerCreatePortal(pos, mCursor.transform.up, -mCursor.transform.forward);
+                }
+                //Register Portal
+                if (Input.GetKeyDown(KeyCode.R))
+                {
+                    GameObject portalObj = mCursor.GetPortal();
+                    if (portalObj != null)
+                    {
+                        controller.PlayerRegisterPortal(portalObj);
+                    }
+                }
+                //Link Portal Source
+                if (Input.GetKeyDown(KeyCode.T))
+                {
+                    GameObject portalObj = mCursor.GetPortal();
+                    if (portalObj != null)
+                    {
+                        src = portalObj.GetComponent<PhotonView>().viewID;
+                    }
+                    controller.linkPanel.setSourceID(src);
+                }
+                //Link Portal Destination
+                if (Input.GetKeyDown(KeyCode.Y))
+                {
+                    GameObject portalObj = mCursor.GetPortal();
+                    if (portalObj != null)
+                    {
+                        dest = portalObj.GetComponent<PhotonView>().viewID;
+                    }
+                    controller.linkPanel.setDestID(dest);
+                }
+                //Link Portal
+                if (Input.GetKeyDown(KeyCode.U))
+                {
+                    if (src != -1 && dest != -1)
+                    {
+                        controller.portalManager.RequestLinkPortal(src, dest);
+                        src = -1;
+                        dest = -1;
+                    }
+                }
+                //UnLink Portal
+                if (Input.GetKeyDown(KeyCode.X))
+                {
+                    GameObject portalObj = mCursor.GetPortal();
+                    if (portalObj != null)
+                    {
+                        controller.portalManager.RequestUnlinkPortal(portalObj.GetComponent<Portal>());
+                    }
                 }
             }
             else
@@ -51,25 +113,6 @@ public class PlayerController : MonoBehaviour {
                 Debug.LogError("No World Set!");
             }
         }
-
-        //Register Portal
-        if(Input.GetKeyDown(KeyCode.R))
-        {
-            if (controller != null)
-            {
-                RaycastHit hit;
-                var mask = 1 << LayerMask.NameToLayer("Portals");
-                Physics.Raycast(new Ray(userCamera.transform.position, userCamera.transform.forward), out hit, mask);
-
-                if (hit.collider != null)
-                {
-                    controller.PlayerRegisterPortal(hit.collider.gameObject);
-                }
-            }
-        }
-
-
-        
     }
 
     private void PlayerMovementControls()
