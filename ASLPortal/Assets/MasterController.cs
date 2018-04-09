@@ -21,14 +21,13 @@ public class MasterController : MonoBehaviour {
     public string AvatarName = "MasterAvatar";
     public Color AvatarColor = Color.white;
     public Vector3 SpawnPosition = new Vector3(0, 1, 0);
+    public GameObject mCursorPrefab = null;
 
     //Worlds
     public List<string> worldPrefabs;
 
     //UI
     public SourceDestPanel linkPanel = null;
-    int src = -1;
-    int dest = -1;
     
     //Setup State
     private bool setupComplete = false;
@@ -55,42 +54,6 @@ public class MasterController : MonoBehaviour {
 
                 MakeAvatar();
                 setupComplete = true;
-            }
-        }
-
-
-        //Link Portal Source
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            RaycastHit hit;
-            Physics.Raycast(new Ray(mainCamera.transform.position, mainCamera.transform.forward), out hit);
-
-            if (hit.collider != null && hit.collider.gameObject.name == "Portal")
-            {
-                src = hit.collider.gameObject.GetComponent<PhotonView>().viewID;
-            }
-            linkPanel.setSourceID(src);
-        }
-
-        //Link Portal Destination
-        if (Input.GetKeyDown(KeyCode.Y))
-        {
-            RaycastHit hit;
-            Physics.Raycast(new Ray(mainCamera.transform.position, mainCamera.transform.forward), out hit);
-
-            if (hit.collider != null && hit.collider.gameObject.name == "Portal")
-            {
-                dest = hit.collider.gameObject.GetComponent<PhotonView>().viewID;
-            }
-            linkPanel.setDestID(dest);
-        }
-
-        //Link Portal
-        if (Input.GetKeyDown(KeyCode.U))
-        {
-            if (src != -1 && dest != -1)
-            {
-                portalManager.RequestLinkPortal(src, dest);
             }
         }
     }
@@ -123,6 +86,7 @@ public class MasterController : MonoBehaviour {
         pc.userCamera = mainCamera;
         pc.controller = this;
         pc.SetColor(AvatarColor);
+        pc.SetCursor(mCursorPrefab);
 
         portalManager.player = playerAvatar;
     }
