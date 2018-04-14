@@ -46,13 +46,22 @@ public class Portal : MonoBehaviour
     public void Initialize(ViewType viewType, GameObject user)
     {
         this.viewType = viewType;
-        switch(viewType)
+
+        switch (viewType)
         {
             case ViewType.VIRTUAL:
                 break;
             case ViewType.PHYSICAL:
+                WebCamDevice[] devices = WebCamTexture.devices;
+                for (int i = 0; i < devices.Length; i++)
+                    Debug.Log(devices[i].name);
+
                 webCamTexture = new WebCamTexture();
+                Debug.Log("WebCamTexture created");
+
                 webCamTexture.Play();
+
+                Debug.Log(webCamTexture.width + "x" + webCamTexture.height);
                 break;
             case ViewType.HYBRID:
                 Debug.LogError("Error: Cannot Initialize portal. Hybrid view type not yet implemented!");
@@ -91,9 +100,6 @@ public class Portal : MonoBehaviour
                 Renderer renderer = renderQuad.GetComponent<Renderer>();
                 renderer.material = renderMat;
                 renderer.material.mainTexture = other.webCamTexture;
-
-                if (!other.webCamTexture.isPlaying)
-                    other.webCamTexture.Play();
                 break;
             case ViewType.HYBRID:
                 Debug.LogError("Error: Cannot Link. Hybrid view type not yet implemented!");
@@ -109,6 +115,7 @@ public class Portal : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         //sent the user cam info to the destination portal if there is one
         //relative positions and orientations to the this portal
         if (destinationPortal != null && userCamera != null)
@@ -153,47 +160,52 @@ public class Portal : MonoBehaviour
     public void TeleportObject(GameObject go)
     {
         Debug.Log("teleportObject! [" + go.name + "]");
-        Debug.Log("Source: " + this.GetComponent<PhotonView>().viewID.ToString());
-        
-        //teleportation will only happen if:
+        Debug.Log("Source: " + GetComponent<PhotonView>().viewID.ToString());
+
+        //Teleportation will only happen if:
         //1. a destination portal exists
-        //2. the object is on the front side of the source portal
+        //2. It is not pure physical
+        //3. the object is on the front side of the source portal
         //4. the object is moving towards the portal
-        if(destinationPortal != null)
-        {
-            Debug.Log("Destination: " + destinationPortal.GetComponent<PhotonView>().viewID.ToString());
 
-            Matrix4x4 m = transform.worldToLocalMatrix;
-            Vector3 objectOffset = m.MultiplyPoint(go.transform.position);
-
-            //Vector3 objectOffset = go.transform.position - transform.position;
-            bool playerInFront = objectOffset.z > 0.0f;
-
-            //is object moving towards the portal
-            Vector3 objVelocity = go.GetComponent<Rigidbody>().velocity;
-            bool movingTowards = Vector3.Dot(transform.forward, objVelocity) < 0.0f;
-
-            //is object in front of the portal
-            if (playerInFront)
-            {
-                if (movingTowards || objVelocity == Vector3.zero)
-                {
-                    TeleportEnter(go);
-                }
-                else
-                {
-                    Debug.Log("Not moving towards portal, ignoring");
-                }
-            }
-            else
-            {
-                Debug.Log("Player not in front of portal, ignoring");
-            }
-        }
-        else
+        //1. Is there a destination portal?
+        if (destinationPortal == null)
         {
             Debug.Log("No destination to teleport to, ignoring");
+            return;
         }
+        Debug.Log("Destination: " + destinationPortal.GetComponent<PhotonView>().viewID.ToString());
+
+        //2. Is the destination not pure physical?
+        if(destinationPortal.viewType == ViewType.PHYSICAL)
+        {
+            Debug.Log("Destination is physical only, ignoring");
+            return;
+        }
+
+        //3. Is the object in front of the portal?
+        Matrix4x4 m = transform.worldToLocalMatrix;
+        Vector3 objectOffset = m.MultiplyPoint(go.transform.position);
+        bool playerInFront = objectOffset.z > 0.0f;
+
+        if(!playerInFront)
+        {
+            Debug.Log("Player not in front of portal, ignoring");
+            return;
+        }
+
+        //4. Is the object moving towards the portal?
+        Vector3 objVelocity = go.GetComponent<Rigidbody>().velocity;
+        bool movingTowards = Vector3.Dot(transform.forward, objVelocity) < 0.0f;
+
+        if (!(movingTowards || objVelocity == Vector3.zero))
+        {
+            Debug.Log("Not moving towards portal, ignoring");
+            return;
+        }
+
+        //teleport the object
+        TeleportEnter(go);
     }
 
 

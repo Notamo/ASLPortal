@@ -8,6 +8,7 @@ public class World : MonoBehaviour {
     public WorldManager worldManager = null;
     public Transform defaultPortalXform = null;
     public Portal defaultPortal = null;
+    public Portal.ViewType defaultPortalViewType = Portal.ViewType.VIRTUAL;
 
     public virtual void Awake()
     {
@@ -25,7 +26,7 @@ public class World : MonoBehaviour {
             PhotonNetwork.inRoom &&
            defaultPortalXform != null)
         {
-            defaultPortal = portalManager.MakePortal(defaultPortalXform.position, defaultPortalXform.forward, defaultPortalXform.up);
+            defaultPortal = portalManager.MakePortal(defaultPortalXform.position, defaultPortalXform.forward, defaultPortalXform.up, defaultPortalViewType);
             portalManager.RequestRegisterPortal(defaultPortal);
             worldManager.AddToWorld(this, defaultPortal.gameObject);
         }

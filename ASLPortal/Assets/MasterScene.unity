@@ -168,6 +168,7 @@ MonoBehaviour:
   - RedCubeWorld
   - GreenCubeWorld
   - BlueCubeWorld
+  - WebCamWorld
   linkPanel: {fileID: 439690535}
 --- !u!224 &174584114
 RectTransform:
