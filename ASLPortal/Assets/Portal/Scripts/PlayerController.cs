@@ -56,8 +56,8 @@ public class PlayerController : MonoBehaviour {
                 //Create Portal
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    Vector3 pos = mCursor.transform.position + 0.01f * mCursor.transform.up;
-                    controller.PlayerCreatePortal(pos, mCursor.transform.up, -mCursor.transform.forward);
+                    Vector3 pos = mCursor.transform.position;
+                    controller.PlayerCreatePortal(pos, -mCursor.transform.forward, mCursor.transform.up);
                 }
                 //Register Portal
                 if (Input.GetKeyDown(KeyCode.R))

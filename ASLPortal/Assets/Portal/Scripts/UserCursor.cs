@@ -2,26 +2,34 @@
 
 public class UserCursor : MonoBehaviour
 {
-    private MeshRenderer meshRenderer;
+    private MeshRenderer[] meshRenderers;
     private float rotation;
+    private bool hiding = true;
 
     // Use this for initialization
     void Start()
     {
         // Grab the mesh renderer that's on the same object as this script.
-        meshRenderer = this.gameObject.GetComponentInChildren<MeshRenderer>();
-        meshRenderer.enabled = false;
+        meshRenderers = this.gameObject.GetComponentsInChildren<MeshRenderer>();
+        foreach(MeshRenderer mesh in meshRenderers)
+        {
+            mesh.enabled = false;
+        }
         rotation = 0.0f;
     }
 
     public void HideCursor(bool hide)
     {
-        meshRenderer.enabled = !hide;
+        foreach (MeshRenderer mesh in meshRenderers)
+        {
+            mesh.enabled = !hide;
+        }
+        hiding = hide;
     }
 
     public bool IsHidden()
     {
-        return !meshRenderer.enabled;
+        return hiding;
     }
 
     // Return the portal this is on, or null
@@ -61,13 +69,23 @@ public class UserCursor : MonoBehaviour
         {
             // If the raycast hit a hologram...
             // Display the cursor mesh.
-            meshRenderer.enabled = true;
+            foreach (MeshRenderer mesh in meshRenderers)
+            {
+                mesh.enabled = true;
+            }
 
             // Move thecursor to the point where the raycast hit.
             this.transform.position = hitInfo.point;
 
             // Rotate the cursor to hug the surface of the hologram.
             this.transform.rotation = Quaternion.FromToRotation(Vector3.up, hitInfo.normal);
+        }
+        else
+        {
+            foreach (MeshRenderer mesh in meshRenderers)
+            {
+                mesh.enabled = false;
+            }
         }
 
         if(Input.GetKeyDown(KeyCode.LeftArrow))
