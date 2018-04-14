@@ -444,7 +444,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!23 &707898715
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -458,7 +458,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 224ade5f608a5f94e957de7690b9c084, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -828,7 +828,7 @@ Prefab:
     - target: {fileID: 114961132145658658, guid: c42b35311518a4d4fb01b26d9f17a5a8,
         type: 2}
       propertyPath: RoomName
-      value: ASLPortalDemo
+      value: ASLPortalDemo2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c42b35311518a4d4fb01b26d9f17a5a8, type: 2}

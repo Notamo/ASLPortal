@@ -94,9 +94,9 @@ public class MasterController : MonoBehaviour {
 
     //PlayerCreatePortal
     //Try to create a portal where the player camera is looking at on the plane
-    public void PlayerCreatePortal(Vector3 position, Vector3 forward, Vector3 up)
+    public void PlayerCreatePortal(Vector3 position, Vector3 forward, Vector3 up, Portal.ViewType vType = Portal.ViewType.VIRTUAL)
     {
-        portalManager.MakePortal(position, forward, up);
+        portalManager.MakePortal(position, forward, up, vType);
     }
 
     //PlayerRegisterPortal

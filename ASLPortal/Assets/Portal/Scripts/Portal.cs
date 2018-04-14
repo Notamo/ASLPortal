@@ -5,25 +5,63 @@ using UnityEngine;
 
 public class Portal : MonoBehaviour
 {
+    //The type of view a portal provides in any connected
+    //portal's renderQuad
+    public enum ViewType
+    {
+        NONE,
+        VIRTUAL,      //displays the unity scene
+        PHYSICAL,     //displays a webcam feed
+        HYBRID        //mix of the two
+    };
+
+    ViewType viewType = ViewType.VIRTUAL;
+
+
     public Camera userCamera = null;
     public Portal destinationPortal = null;
 
     public GameObject renderQuad = null;
     public GameObject copyCameraPrefab = null;
     private Camera copyCamera = null;
-    public Material copyCamMat = null;
+
+    public Material idleMat = null;     //material for idling
+    public Material copyCamMat = null;      //material for using a copyCam
+    public Material webcamMat = null;
+
+    //if we are a camera portal
+    private WebCamTexture webCamTexture = null;
 
     // Use this for initialization
     void Start()
     {
         Debug.Assert(copyCameraPrefab != null);
         Debug.Assert(renderQuad != null);
+
+        Debug.Assert(idleMat != null);
+        Debug.Assert(copyCamMat != null);
+        Debug.Assert(webcamMat != null);
     }
 
-
-    public void Initialize(Portal other, GameObject user)
+    public void Initialize(ViewType viewType, GameObject user)
     {
-        destinationPortal = other;
+        this.viewType = viewType;
+        switch(viewType)
+        {
+            case ViewType.VIRTUAL:
+                break;
+            case ViewType.PHYSICAL:
+                //webCamTexture = new WebCamTexture();
+                //webCamTexture.Play();
+                break;
+            case ViewType.HYBRID:
+                Debug.LogError("Error: Cannot Initialize portal. Hybrid view type not yet implemented!");
+                return;
+            default:
+                Debug.LogError("Error: Cannot Initialize portal. Invalid ViewType for initialization!");
+                return;
+        }
+        
         userCamera = user.GetComponent<PlayerController>().userCamera;
 
         //set up the copy camera
@@ -32,11 +70,60 @@ public class Portal : MonoBehaviour
 
         if (copyCamera.targetTexture != null) copyCamera.targetTexture.Release();
         copyCamera.targetTexture = new RenderTexture(Screen.width, Screen.height, 24);
+    }
 
-        //Set up the material to reference the copy camera's rendertexture
-        Material camMat = new Material(copyCamMat);
-        camMat.mainTexture = copyCamera.targetTexture;
-        renderQuad.GetComponent<MeshRenderer>().material = camMat;
+    public void LinkDestination(Portal other)
+    {
+        destinationPortal = other;
+
+        Material renderMat = null;
+        switch (other.viewType)
+        {
+            case ViewType.VIRTUAL:
+                //Set up the material to reference the copy camera's rendertexture
+                renderMat = new Material(copyCamMat);
+                renderMat.mainTexture = copyCamera.targetTexture;
+                renderQuad.GetComponent<MeshRenderer>().material = renderMat;
+                break;
+            case ViewType.PHYSICAL:
+                Debug.Log("portal link physical view");
+                /*Debug.Assert(other.webCamTexture != null);
+                //set up the material to reference the other portals video feed
+                renderMat = new Material(webcamMat);
+                Renderer renderer = renderQuad.GetComponent<Renderer>();
+                //renderer.material = renderMat;
+                renderer.material.mainTexture = other.webCamTexture;
+                
+                other.webCamTexture.Play();*/
+
+                WebCamDevice[] devices = WebCamTexture.devices;
+                for (int i = 0; i < devices.Length; i++)
+                {
+                    Debug.Log(devices[i].name);
+                }
+
+                Debug.Assert(devices.Length >= 1);
+
+                int activeCam = 0;
+
+                WebCamTexture wct = new WebCamTexture("" + devices[activeCam].name);
+                renderQuad.GetComponent<MeshRenderer>().material.mainTexture = wct;
+
+                Debug.Log("Active Camera: " + devices[activeCam] + ", \"" + devices[activeCam].name);
+                //Debug.Assert(wct != null);
+                //Renderer renderer = renderQuad.GetComponent<Renderer>();
+                //Debug.Assert(renderer != null);
+                //renderer.material.mainTexture = wct;
+                wct.Play();
+
+                break;
+            case ViewType.HYBRID:
+                Debug.LogError("Error: Cannot Link. Hybrid view type not yet implemented!");
+                return;
+            default:
+                Debug.LogError("Error: Cannot Link. Other portal not initialized!");
+                return;
+        }
     }
 
     // Update is called once per frame
@@ -163,17 +250,10 @@ public class Portal : MonoBehaviour
 
     public void Close()
     {
-        // Destroy copy cameras
-        if (copyCamera != null)
-        {
-            Destroy(copyCamera.gameObject);
-            copyCamera = null;
-        }
-
         // Unlink from dest portal
         destinationPortal = null;
 
         // Release render texture reference
-        renderQuad.GetComponent<MeshRenderer>().material.mainTexture = null;
+        renderQuad.GetComponent<MeshRenderer>().material = idleMat;
     }
 }
