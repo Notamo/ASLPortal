@@ -244,7 +244,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 224ade5f608a5f94e957de7690b9c084, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -514,7 +514,9 @@ MonoBehaviour:
   renderQuad: {fileID: 1530876642372846}
   copyCameraPrefab: {fileID: 1092014541888906, guid: ad471d676a49b4d499487d368601afe1,
     type: 2}
+  idleMat: {fileID: 2100000, guid: 224ade5f608a5f94e957de7690b9c084, type: 2}
   copyCamMat: {fileID: 2100000, guid: c1e565ede84a13c4dbf7d9630bbdb1c3, type: 2}
+  webcamMat: {fileID: 2100000, guid: 90ac7f7b4becf7e4fb8cbef763821d60, type: 2}
 --- !u!114 &114715509019102460
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -7,7 +7,6 @@ using ASL.Manipulation.Objects;
 public class WorldManager : MonoBehaviour {
 
     public Dictionary<int, World> worlds;
-    public List<string> worldPrefabs;
 
     public bool masterClient = false;
     private ObjectInteractionManager objManager;
