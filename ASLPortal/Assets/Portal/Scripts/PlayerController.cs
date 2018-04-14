@@ -59,6 +59,14 @@ public class PlayerController : MonoBehaviour {
                     Vector3 pos = mCursor.transform.position;
                     controller.PlayerCreatePortal(pos, -mCursor.transform.forward, mCursor.transform.up);
                 }
+
+                //Create webcam portal
+                if(Input.GetKeyDown(KeyCode.C))
+                {
+                    Vector3 pos = mCursor.transform.position + 0.01f * mCursor.transform.up;
+                    controller.PlayerCreatePortal(pos, mCursor.transform.up, -mCursor.transform.forward, Portal.ViewType.PHYSICAL);
+                }
+
                 //Register Portal
                 if (Input.GetKeyDown(KeyCode.R))
                 {

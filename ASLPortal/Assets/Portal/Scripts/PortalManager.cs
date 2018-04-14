@@ -33,13 +33,16 @@ public class PortalManager : MonoBehaviour
     /*
      * Instantiate and initialize the Portal Prefabs
      */
-    public Portal MakePortal(Vector3 position, Vector3 forward, Vector3 up)
+    public Portal MakePortal(Vector3 position, Vector3 forward, Vector3 up, Portal.ViewType vType = Portal.ViewType.VIRTUAL)
     {
         GameObject newPortal = objManager.InstantiateOwnedObject("Portal") as GameObject;
         newPortal.transform.position = position;
         newPortal.transform.rotation = Quaternion.LookRotation(forward, up);
 
-        return newPortal.GetComponent<Portal>();
+        Portal p = newPortal.GetComponent<Portal>();
+        p.Initialize(vType, player);
+
+        return p;// newPortal.GetComponent<Portal>();
     }
 
     /*
@@ -187,8 +190,8 @@ public class PortalManager : MonoBehaviour
                 if (portalSet[sourceID].destinationPortal != null)
                     UnlinkPortal(sourceID);
 
-                portalSet[sourceID].Initialize(portalSet[destinationID], player);
-
+                //portalSet[sourceID].Initialize(portalSet[destinationID], player);
+                portalSet[sourceID].LinkDestination(portalSet[destinationID]);
                 return true;
             }
             else
@@ -380,19 +383,9 @@ public class PortalManager : MonoBehaviour
         return portalSet.Keys;
     }
 
-    public Portal GetNextPortal(int portalID)
-    {
-        int id = GetNextPortalId(portalID);
-        //if (id < 0) return null;
-        return portalSet[id];
-    }
-
     public int GetNextPortalId(int portalID)
     {
         IEnumerable<int> keys = portalSet.Keys;
-        Debug.Log("first: " + keys.First());
-        Debug.Log("last: " + keys.Last());
-        Debug.Log("portal: " + portalID);
         
         if (!portalSet.ContainsKey(portalID) || keys.Last() == portalID)
             return keys.First();

@@ -5,25 +5,72 @@ using UnityEngine;
 
 public class Portal : MonoBehaviour
 {
+    //The type of view a portal provides in any connected
+    //portal's renderQuad
+    public enum ViewType
+    {
+        NONE,
+        VIRTUAL,      //displays the unity scene
+        PHYSICAL,     //displays a webcam feed
+        HYBRID        //mix of the two
+    };
+
+    ViewType viewType = ViewType.VIRTUAL;
+
+
     public Camera userCamera = null;
     public Portal destinationPortal = null;
 
     public GameObject renderQuad = null;
     public GameObject copyCameraPrefab = null;
     private Camera copyCamera = null;
-    public Material copyCamMat = null;
+
+    public Material idleMat = null;     //material for idling
+    public Material copyCamMat = null;      //material for using a copyCam
+    public Material webCamMat = null;
+
+    //if we are a camera portal
+    private WebCamTexture webCamTexture = null;
 
     // Use this for initialization
     void Start()
     {
         Debug.Assert(copyCameraPrefab != null);
         Debug.Assert(renderQuad != null);
+
+        Debug.Assert(idleMat != null);
+        Debug.Assert(copyCamMat != null);
+        Debug.Assert(webCamMat != null);
     }
 
-
-    public void Initialize(Portal other, GameObject user)
+    public void Initialize(ViewType viewType, GameObject user)
     {
-        destinationPortal = other;
+        this.viewType = viewType;
+
+        switch (viewType)
+        {
+            case ViewType.VIRTUAL:
+                break;
+            case ViewType.PHYSICAL:
+                WebCamDevice[] devices = WebCamTexture.devices;
+                for (int i = 0; i < devices.Length; i++)
+                    Debug.Log(devices[i].name);
+
+                webCamTexture = new WebCamTexture();
+                Debug.Log("WebCamTexture created");
+
+                webCamTexture.Play();
+
+                Debug.Log(webCamTexture.width + "x" + webCamTexture.height);
+                break;
+            case ViewType.HYBRID:
+                Debug.LogError("Error: Cannot Initialize portal. Hybrid view type not yet implemented!");
+                return;
+            default:
+                Debug.LogError("Error: Cannot Initialize portal. Invalid ViewType for initialization!");
+                return;
+        }
+        
         userCamera = user.GetComponent<PlayerController>().userCamera;
 
         //set up the copy camera
@@ -32,16 +79,43 @@ public class Portal : MonoBehaviour
 
         if (copyCamera.targetTexture != null) copyCamera.targetTexture.Release();
         copyCamera.targetTexture = new RenderTexture(Screen.width, Screen.height, 24);
+    }
 
-        //Set up the material to reference the copy camera's rendertexture
-        Material camMat = new Material(copyCamMat);
-        camMat.mainTexture = copyCamera.targetTexture;
-        renderQuad.GetComponent<MeshRenderer>().material = camMat;
+    public void LinkDestination(Portal other)
+    {
+        Debug.Log("Linking to Portal with ViewType: " + other.viewType);
+
+        Material renderMat = null;
+        switch (other.viewType)
+        {
+            case ViewType.VIRTUAL:
+                
+                renderMat = new Material(copyCamMat);
+                renderMat.mainTexture = copyCamera.targetTexture;
+                renderQuad.GetComponent<MeshRenderer>().material = renderMat;
+                break;
+            case ViewType.PHYSICAL:
+
+                renderMat = new Material(webCamMat);
+                Renderer renderer = renderQuad.GetComponent<Renderer>();
+                renderer.material = renderMat;
+                renderer.material.mainTexture = other.webCamTexture;
+                break;
+            case ViewType.HYBRID:
+                Debug.LogError("Error: Cannot Link. Hybrid view type not yet implemented!");
+                return;
+            default:
+                Debug.LogError("Error: Cannot Link. Other portal not initialized!");
+                return;
+        }
+
+        destinationPortal = other;
     }
 
     // Update is called once per frame
     void Update()
     {
+
         //sent the user cam info to the destination portal if there is one
         //relative positions and orientations to the this portal
         if (destinationPortal != null && userCamera != null)
@@ -86,47 +160,52 @@ public class Portal : MonoBehaviour
     public void TeleportObject(GameObject go)
     {
         Debug.Log("teleportObject! [" + go.name + "]");
-        Debug.Log("Source: " + this.GetComponent<PhotonView>().viewID.ToString());
-        
-        //teleportation will only happen if:
+        Debug.Log("Source: " + GetComponent<PhotonView>().viewID.ToString());
+
+        //Teleportation will only happen if:
         //1. a destination portal exists
-        //2. the object is on the front side of the source portal
+        //2. It is not pure physical
+        //3. the object is on the front side of the source portal
         //4. the object is moving towards the portal
-        if(destinationPortal != null)
-        {
-            Debug.Log("Destination: " + destinationPortal.GetComponent<PhotonView>().viewID.ToString());
 
-            Matrix4x4 m = transform.worldToLocalMatrix;
-            Vector3 objectOffset = m.MultiplyPoint(go.transform.position);
-
-            //Vector3 objectOffset = go.transform.position - transform.position;
-            bool playerInFront = objectOffset.z > 0.0f;
-
-            //is object moving towards the portal
-            Vector3 objVelocity = go.GetComponent<Rigidbody>().velocity;
-            bool movingTowards = Vector3.Dot(transform.forward, objVelocity) < 0.0f;
-
-            //is object in front of the portal
-            if (playerInFront)
-            {
-                if (movingTowards || objVelocity == Vector3.zero)
-                {
-                    TeleportEnter(go);
-                }
-                else
-                {
-                    Debug.Log("Not moving towards portal, ignoring");
-                }
-            }
-            else
-            {
-                Debug.Log("Player not in front of portal, ignoring");
-            }
-        }
-        else
+        //1. Is there a destination portal?
+        if (destinationPortal == null)
         {
             Debug.Log("No destination to teleport to, ignoring");
+            return;
         }
+        Debug.Log("Destination: " + destinationPortal.GetComponent<PhotonView>().viewID.ToString());
+
+        //2. Is the destination not pure physical?
+        if(destinationPortal.viewType == ViewType.PHYSICAL)
+        {
+            Debug.Log("Destination is physical only, ignoring");
+            return;
+        }
+
+        //3. Is the object in front of the portal?
+        Matrix4x4 m = transform.worldToLocalMatrix;
+        Vector3 objectOffset = m.MultiplyPoint(go.transform.position);
+        bool playerInFront = objectOffset.z > 0.0f;
+
+        if(!playerInFront)
+        {
+            Debug.Log("Player not in front of portal, ignoring");
+            return;
+        }
+
+        //4. Is the object moving towards the portal?
+        Vector3 objVelocity = go.GetComponent<Rigidbody>().velocity;
+        bool movingTowards = Vector3.Dot(transform.forward, objVelocity) < 0.0f;
+
+        if (!(movingTowards || objVelocity == Vector3.zero))
+        {
+            Debug.Log("Not moving towards portal, ignoring");
+            return;
+        }
+
+        //teleport the object
+        TeleportEnter(go);
     }
 
 
@@ -163,17 +242,10 @@ public class Portal : MonoBehaviour
 
     public void Close()
     {
-        // Destroy copy cameras
-        if (copyCamera != null)
-        {
-            Destroy(copyCamera.gameObject);
-            copyCamera = null;
-        }
-
         // Unlink from dest portal
         destinationPortal = null;
 
         // Release render texture reference
-        renderQuad.GetComponent<MeshRenderer>().material.mainTexture = null;
+        renderQuad.GetComponent<MeshRenderer>().material = idleMat;
     }
 }

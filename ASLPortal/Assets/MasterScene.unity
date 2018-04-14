@@ -161,13 +161,14 @@ MonoBehaviour:
   AvatarName: MasterAvatar
   AvatarColor: {r: 1, g: 1, b: 1, a: 1}
   SpawnPosition: {x: 0, y: 1, z: 0}
-  mCursorPrefab: {fileID: 1351267657673670, guid: e4345a33635a45f48be94b727f059d65,
+  mCursorPrefab: {fileID: 1009970958297572, guid: e4345a33635a45f48be94b727f059d65,
     type: 2}
   worldPrefabs:
   - HubWorld
   - RedCubeWorld
   - GreenCubeWorld
   - BlueCubeWorld
+  - WebCamWorld
   linkPanel: {fileID: 439690535}
 --- !u!224 &174584114
 RectTransform:
@@ -412,7 +413,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 585487943e62fd841987d4d1a702dea8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  worldPrefabs: []
   masterClient: 0
 --- !u!4 &544202707
 Transform:
@@ -733,7 +733,7 @@ Prefab:
     - target: {fileID: 114961132145658658, guid: c42b35311518a4d4fb01b26d9f17a5a8,
         type: 2}
       propertyPath: RoomName
-      value: ASLPortalDemo
+      value: ASLPortalDemo2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c42b35311518a4d4fb01b26d9f17a5a8, type: 2}
