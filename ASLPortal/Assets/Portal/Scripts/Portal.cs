@@ -27,7 +27,7 @@ public class Portal : MonoBehaviour
 
     public Material idleMat = null;     //material for idling
     public Material copyCamMat = null;      //material for using a copyCam
-    public Material webcamMat = null;
+    public Material webCamMat = null;
 
     //if we are a camera portal
     private WebCamTexture webCamTexture = null;
@@ -40,7 +40,7 @@ public class Portal : MonoBehaviour
 
         Debug.Assert(idleMat != null);
         Debug.Assert(copyCamMat != null);
-        Debug.Assert(webcamMat != null);
+        Debug.Assert(webCamMat != null);
     }
 
     public void Initialize(ViewType viewType, GameObject user)
@@ -51,8 +51,8 @@ public class Portal : MonoBehaviour
             case ViewType.VIRTUAL:
                 break;
             case ViewType.PHYSICAL:
-                //webCamTexture = new WebCamTexture();
-                //webCamTexture.Play();
+                webCamTexture = new WebCamTexture();
+                webCamTexture.Play();
                 break;
             case ViewType.HYBRID:
                 Debug.LogError("Error: Cannot Initialize portal. Hybrid view type not yet implemented!");
@@ -74,48 +74,26 @@ public class Portal : MonoBehaviour
 
     public void LinkDestination(Portal other)
     {
-        destinationPortal = other;
+        Debug.Log("Linking to Portal with ViewType: " + other.viewType);
 
         Material renderMat = null;
         switch (other.viewType)
         {
             case ViewType.VIRTUAL:
-                //Set up the material to reference the copy camera's rendertexture
+                
                 renderMat = new Material(copyCamMat);
                 renderMat.mainTexture = copyCamera.targetTexture;
                 renderQuad.GetComponent<MeshRenderer>().material = renderMat;
                 break;
             case ViewType.PHYSICAL:
-                Debug.Log("portal link physical view");
-                /*Debug.Assert(other.webCamTexture != null);
-                //set up the material to reference the other portals video feed
-                renderMat = new Material(webcamMat);
+
+                renderMat = new Material(webCamMat);
                 Renderer renderer = renderQuad.GetComponent<Renderer>();
-                //renderer.material = renderMat;
+                renderer.material = renderMat;
                 renderer.material.mainTexture = other.webCamTexture;
-                
-                other.webCamTexture.Play();*/
 
-                WebCamDevice[] devices = WebCamTexture.devices;
-                for (int i = 0; i < devices.Length; i++)
-                {
-                    Debug.Log(devices[i].name);
-                }
-
-                Debug.Assert(devices.Length >= 1);
-
-                int activeCam = 0;
-
-                WebCamTexture wct = new WebCamTexture("" + devices[activeCam].name);
-                renderQuad.GetComponent<MeshRenderer>().material.mainTexture = wct;
-
-                Debug.Log("Active Camera: " + devices[activeCam] + ", \"" + devices[activeCam].name);
-                //Debug.Assert(wct != null);
-                //Renderer renderer = renderQuad.GetComponent<Renderer>();
-                //Debug.Assert(renderer != null);
-                //renderer.material.mainTexture = wct;
-                wct.Play();
-
+                if (!other.webCamTexture.isPlaying)
+                    other.webCamTexture.Play();
                 break;
             case ViewType.HYBRID:
                 Debug.LogError("Error: Cannot Link. Hybrid view type not yet implemented!");
@@ -124,6 +102,8 @@ public class Portal : MonoBehaviour
                 Debug.LogError("Error: Cannot Link. Other portal not initialized!");
                 return;
         }
+
+        destinationPortal = other;
     }
 
     // Update is called once per frame
