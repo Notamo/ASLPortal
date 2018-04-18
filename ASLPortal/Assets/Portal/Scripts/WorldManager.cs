@@ -126,6 +126,7 @@ public class WorldManager : MonoBehaviour {
         GameObject toSet = PhotonView.Find(toSetId).gameObject;
 
         toSet.transform.parent = world.transform;
+        world.defaultPortalID = toSetId;
     }
 
     #endregion
