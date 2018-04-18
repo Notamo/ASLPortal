@@ -70,10 +70,15 @@ public class Portal : MonoBehaviour
                 Debug.LogError("Error: Cannot Initialize portal. Invalid ViewType for initialization!");
                 return;
         }
-        
+
         userCamera = user.GetComponent<PlayerController>().userCamera;
 
         //set up the copy camera
+        InitCopyCam();
+    }
+
+    private void InitCopyCam()
+    {
         if (copyCamera == null)
             copyCamera = Instantiate(copyCameraPrefab, transform).GetComponent<Camera>();
 
@@ -89,7 +94,7 @@ public class Portal : MonoBehaviour
         switch (other.viewType)
         {
             case ViewType.VIRTUAL:
-                
+                if (copyCamera == null) InitCopyCam();
                 renderMat = new Material(copyCamMat);
                 renderMat.mainTexture = copyCamera.targetTexture;
                 renderQuad.GetComponent<MeshRenderer>().material = renderMat;
@@ -177,7 +182,7 @@ public class Portal : MonoBehaviour
         Debug.Log("Destination: " + destinationPortal.GetComponent<PhotonView>().viewID.ToString());
 
         //2. Is the destination not pure physical?
-        if(destinationPortal.viewType == ViewType.PHYSICAL)
+        if (destinationPortal.viewType == ViewType.PHYSICAL)
         {
             Debug.Log("Destination is physical only, ignoring");
             return;
@@ -188,7 +193,7 @@ public class Portal : MonoBehaviour
         Vector3 objectOffset = m.MultiplyPoint(go.transform.position);
         bool playerInFront = objectOffset.z > 0.0f;
 
-        if(!playerInFront)
+        if (!playerInFront)
         {
             Debug.Log("Player not in front of portal, ignoring");
             return;

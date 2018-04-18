@@ -9,6 +9,7 @@ public class World : MonoBehaviour {
     public Transform defaultPortalXform = null;
     public Portal defaultPortal = null;
     public Portal.ViewType defaultPortalViewType = Portal.ViewType.VIRTUAL;
+    public int defaultPortalID = -1;
 
     public virtual void Awake()
     {
@@ -30,7 +31,11 @@ public class World : MonoBehaviour {
             portalManager.RequestRegisterPortal(defaultPortal);
             worldManager.AddToWorld(this, defaultPortal.gameObject);
         }
-	}
+        else if(PhotonNetwork.inRoom && defaultPortalXform != null)
+        {
+            defaultPortal = PhotonView.Find(defaultPortalID).GetComponent<Portal>();
+        }
+    }
 	
 	// Update is called once per frame
 	void Update () {
