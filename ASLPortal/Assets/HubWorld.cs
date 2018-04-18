@@ -18,6 +18,8 @@ public class HubWorld : World {
         Debug.Log("HubWorld " + name);
 
         Camera cam = GameObject.Find("Main Camera").GetComponent<Camera>();
+
+        Debug.Assert(defaultPortal != null);
         selector.Initialize(cam, defaultPortal);
 	}
 }
