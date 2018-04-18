@@ -413,7 +413,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 585487943e62fd841987d4d1a702dea8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  masterClient: 0
+  masterClient: 1
 --- !u!4 &544202707
 Transform:
   m_ObjectHideFlags: 0
@@ -733,7 +733,7 @@ Prefab:
     - target: {fileID: 114961132145658658, guid: c42b35311518a4d4fb01b26d9f17a5a8,
         type: 2}
       propertyPath: RoomName
-      value: ASLPortalDemo2
+      value: ASLPortalDemo
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c42b35311518a4d4fb01b26d9f17a5a8, type: 2}

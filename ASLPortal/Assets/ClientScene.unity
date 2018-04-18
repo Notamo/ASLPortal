@@ -254,12 +254,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 187435579}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -630.5, y: -316, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_Father: {fileID: 524493282}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &524493281
 GameObject:
@@ -292,6 +292,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 98047663}
+  - {fileID: 187435582}
   m_Father: {fileID: 1310674386}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -558,6 +559,12 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ab49d762ed2b96843811cf966a0b7279, type: 2}
   m_IsPrefabParent: 0
+--- !u!114 &778688546 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114130710415470774, guid: ab49d762ed2b96843811cf966a0b7279,
+    type: 2}
+  m_PrefabInternal: {fileID: 778688545}
+  m_Script: {fileID: 11500000, guid: 25349e5e806d55941bb13bbfb52da8d3, type: 3}
 --- !u!1 &1274916054
 GameObject:
   m_ObjectHideFlags: 0
@@ -710,7 +717,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1310674385
 GameObject:
@@ -740,7 +747,7 @@ Transform:
   m_Children:
   - {fileID: 524493282}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1310674387
 MonoBehaviour:
@@ -754,7 +761,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   masterClient: 0
-  objManager: {fileID: 0}
+  objManager: {fileID: 778688546}
   portalManager: {fileID: 1538124395}
   worldManager: {fileID: 2094872162}
   mainCamera: {fileID: 1277827226}
@@ -908,7 +915,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 585487943e62fd841987d4d1a702dea8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  masterClient: 1
+  masterClient: 0
 --- !u!4 &2094872163
 Transform:
   m_ObjectHideFlags: 0
@@ -921,5 +928,5 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
