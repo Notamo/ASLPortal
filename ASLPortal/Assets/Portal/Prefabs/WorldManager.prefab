@@ -111,8 +111,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fbc7066156de1b4485d26dc57bd5812, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  worldMgr: {fileID: 114845557701226840}
+  MasterClient: 0
   portalMgr: {fileID: 114933201357081878}
+  mainCamera: {fileID: 0}
+  AvatarName: MasterAvatar
+  SpawnPos: {x: 0, y: 1, z: 0}
+  PlaneName: GreenPlane
+  linkPanel: {fileID: 0}
 --- !u!114 &114845557701226840
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -124,6 +129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 585487943e62fd841987d4d1a702dea8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  masterClient: 0
 --- !u!114 &114933201357081878
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -132,7 +138,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 1613126032988196}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd77888be9707074290e729e8db8a4ec, type: 3}
+  m_Script: {fileID: 11500000, guid: a8f7156ffd3f871409f85f47a4e44eb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainCamera: {fileID: 0}
+  MasterClient: 0
+  player: {fileID: 0}

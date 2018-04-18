@@ -42,7 +42,7 @@ public class WorldManager : MonoBehaviour {
         int worldId = world.GetComponent<PhotonView>().viewID;
 
         world.transform.parent = gameObject.transform;
-        world.transform.localPosition = Vector3.right * worlds.Count * 20;          //improvements necessary (what if we remove a world?)
+        world.transform.localPosition = Vector3.up * worlds.Count * 1000;          //improvements necessary (what if we remove a world?)
 
         worlds.Add(worldId, world);
 
