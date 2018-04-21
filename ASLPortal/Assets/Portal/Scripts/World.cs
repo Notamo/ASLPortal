@@ -9,7 +9,6 @@ public class World : MonoBehaviour {
     public Transform defaultPortalXform = null;
     public Portal defaultPortal = null;
     public Portal.ViewType defaultPortalViewType = Portal.ViewType.VIRTUAL;
-    public int defaultPortalID = -1;
 
     public virtual void Awake()
     {
@@ -21,7 +20,7 @@ public class World : MonoBehaviour {
         Debug.Assert(worldManager != null);
     }
 	// Use this for initialization
-	public virtual void Start () {
+	public virtual void Init () {
         //instantiate a portal as well if we are the master client
         if(controller.masterClient &&
             PhotonNetwork.inRoom &&
@@ -33,7 +32,15 @@ public class World : MonoBehaviour {
         }
         else if(PhotonNetwork.inRoom && defaultPortalXform != null)
         {
-            defaultPortal = PhotonView.Find(defaultPortalID).GetComponent<Portal>();
+            Portal portal = GetComponentInChildren<Portal>();
+            if (portal != null)
+            {
+                defaultPortal = portal;
+            }
+            else
+            {
+                Debug.Log("No default portal found for World: " + gameObject.name);
+            }
         }
     }
 	

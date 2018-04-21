@@ -735,6 +735,11 @@ Prefab:
       propertyPath: RoomName
       value: ASLPortalDemo
       objectReference: {fileID: 0}
+    - target: {fileID: 114065975440448632, guid: c42b35311518a4d4fb01b26d9f17a5a8,
+        type: 2}
+      propertyPath: ownershipTransfer
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c42b35311518a4d4fb01b26d9f17a5a8, type: 2}
   m_IsPrefabParent: 0

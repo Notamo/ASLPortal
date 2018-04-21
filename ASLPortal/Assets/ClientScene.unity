@@ -763,12 +763,11 @@ MonoBehaviour:
   masterClient: 0
   objManager: {fileID: 778688546}
   portalManager: {fileID: 1538124395}
-  worldManager: {fileID: 2094872162}
+  worldManager: {fileID: 1614087698}
   mainCamera: {fileID: 1277827226}
-  playerAvatar: {fileID: 1249044546244228, guid: bc029581ebca61141a6c761101a6762d,
-    type: 2}
-  AvatarName: ClientAvatar
-  AvatarColor: {r: 1, g: 1, b: 1, a: 1}
+  playerAvatar: {fileID: 0}
+  AvatarName: UserAvatar
+  AvatarColor: {r: 1, g: 0, b: 0, a: 1}
   SpawnPosition: {x: 0, y: 1, z: 0}
   mCursorPrefab: {fileID: 1009970958297572, guid: e4345a33635a45f48be94b727f059d65,
     type: 2}
@@ -794,8 +793,7 @@ GameObject:
 --- !u!114 &1538124395
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 114205771813883490, guid: 8e67341da3754a54eb75660f05646883,
-    type: 2}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1538124394}
   m_Enabled: 1
@@ -818,6 +816,48 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1614087697
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1614087699}
+  - component: {fileID: 1614087698}
+  m_Layer: 0
+  m_Name: WorldManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1614087698
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1614087697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 585487943e62fd841987d4d1a702dea8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  masterClient: 0
+  numWorlds: 0
+--- !u!4 &1614087699
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1614087697}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 30.85228, y: 2.625, z: 2.4704745}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1801366895
 Prefab:
@@ -876,7 +916,7 @@ Prefab:
     - target: {fileID: 114961132145658658, guid: c42b35311518a4d4fb01b26d9f17a5a8,
         type: 2}
       propertyPath: RoomName
-      value: ASLPortalDemo2
+      value: ASLPortalDemo
       objectReference: {fileID: 0}
     - target: {fileID: 114961132145658658, guid: c42b35311518a4d4fb01b26d9f17a5a8,
         type: 2}
@@ -886,47 +926,3 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c42b35311518a4d4fb01b26d9f17a5a8, type: 2}
   m_IsPrefabParent: 0
---- !u!1 &2094872161
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 1057596293758248, guid: 89ed33935fdaa7a44b2d86d082407f5a,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 2094872163}
-  - component: {fileID: 2094872162}
-  m_Layer: 0
-  m_Name: WorldManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2094872162
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 114845557701226840, guid: 89ed33935fdaa7a44b2d86d082407f5a,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2094872161}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 585487943e62fd841987d4d1a702dea8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  masterClient: 0
---- !u!4 &2094872163
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 4814811642440870, guid: 89ed33935fdaa7a44b2d86d082407f5a,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2094872161}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

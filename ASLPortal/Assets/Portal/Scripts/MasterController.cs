@@ -4,7 +4,8 @@ using UnityEngine;
 
 using ASL.Manipulation.Objects;
 
-public class MasterController : MonoBehaviour {
+public class MasterController : MonoBehaviour
+{
     //are we the master client?
     public bool masterClient = false;
 
@@ -28,32 +29,63 @@ public class MasterController : MonoBehaviour {
 
     //UI
     public SourceDestPanel linkPanel = null;
-    
+
     //Setup State
     private bool setupComplete = false;
 
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         objManager = GameObject.Find("ObjectInteractionManager").GetComponent<ObjectInteractionManager>();
+        PhotonNetwork.OnEventCall += OnEvent;
+
         Debug.Assert(objManager != null);
         Debug.Assert(worldManager != null);
         Debug.Assert(portalManager != null);
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update()
+    {
         //Do Setup
         if (Input.GetKeyDown(KeyCode.L))
         {
             if (!setupComplete && PhotonNetwork.inRoom)
             {
-                if (masterClient){
+                MakeAvatar();
+
+                if (masterClient)
+                {
                     CreateDefaultWorlds();
+                    Debug.Log("Sending Master load event");
+                    RaiseEventOptions options = new RaiseEventOptions();
+                    options.Receivers = ReceiverGroup.Others;
+                    PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_MASTER_LOAD, 1, true, options);
+                }
+                else
+                {
+                    worldManager.FindWorlds();
                 }
 
-                MakeAvatar();
+                World world = worldManager.getWorldByName("HubWorld");
+                if (world != null)
+                {
+                    worldManager.AddToWorld(world, playerAvatar);
+                    playerAvatar.transform.localPosition = SpawnPosition;
+                }
+
                 setupComplete = true;
+            }
+            else if (playerAvatar == null && PhotonNetwork.inRoom)
+            {
+                MakeAvatar();
+                World world = worldManager.getWorldByName("HubWorld");
+                if (world != null)
+                {
+                    worldManager.AddToWorld(world, playerAvatar);
+                    playerAvatar.transform.localPosition = SpawnPosition;
+                }
             }
         }
     }
@@ -61,10 +93,11 @@ public class MasterController : MonoBehaviour {
     //Create the Worlds that will exist from the outset
     private void CreateDefaultWorlds()
     {
-        foreach(string worldPrefab in worldPrefabs)
+        foreach (string worldPrefab in worldPrefabs)
         {
             worldManager.CreateWorld(worldPrefab);
         }
+        worldManager.InitializeAll();
     }
 
     //Make Avatar
@@ -77,10 +110,6 @@ public class MasterController : MonoBehaviour {
         playerAvatar.transform.localPosition = SpawnPosition;
         mainCamera.transform.SetParent(playerAvatar.transform);
         mainCamera.transform.localPosition = .5f * playerAvatar.transform.up;
-
-        World world = worldManager.getWorldByName("HubWorld");
-        if(world != null)
-            worldManager.AddToWorld(world, playerAvatar);
 
         //add the player controller after so other players can't manipulate it
         PlayerController pc = playerAvatar.AddComponent<PlayerController>() as PlayerController;
@@ -112,4 +141,39 @@ public class MasterController : MonoBehaviour {
             Debug.LogError("Object [" + portalGO.name + "] is not a portal! cannot register!");
         }
     }
+
+    #region EVENT_PROCESSING
+    //handle events specifically related to portal stuff
+    private void OnEvent(byte eventCode, object content, int senderID)
+    {
+        //handle events specifically related to portal stuff
+        switch (eventCode)
+        {
+            case UWBNetworkingPackage.ASLEventCode.EV_MASTER_LOAD:
+                Debug.Log("EV_REG: " + (int)content);
+                ProcessMasterLoad();
+                break;
+        }
+    }
+
+    private void ProcessMasterLoad()
+    {
+        if (!masterClient)
+        {
+            worldManager.FindWorlds();
+
+            if (playerAvatar != null)
+            {
+                World world = worldManager.getWorldByName("HubWorld");
+                if (world != null)
+                {
+                    worldManager.AddToWorld(world, playerAvatar);
+                    playerAvatar.transform.localPosition = SpawnPosition;
+                }
+            }
+
+            setupComplete = true;
+        }
+    }
+    #endregion
 }

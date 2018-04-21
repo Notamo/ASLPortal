@@ -71,7 +71,8 @@ public class Portal : MonoBehaviour
                 return;
         }
 
-        userCamera = user.GetComponent<PlayerController>().userCamera;
+        if (user != null)
+            userCamera = user.GetComponent<PlayerController>().userCamera;
 
         //set up the copy camera
         InitCopyCam();
@@ -79,6 +80,9 @@ public class Portal : MonoBehaviour
 
     private void InitCopyCam()
     {
+        if (userCamera == null)
+            userCamera = Camera.main;
+
         if (copyCamera == null)
             copyCamera = Instantiate(copyCameraPrefab, transform).GetComponent<Camera>();
 
@@ -120,7 +124,6 @@ public class Portal : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         //sent the user cam info to the destination portal if there is one
         //relative positions and orientations to the this portal
         if (destinationPortal != null && userCamera != null)

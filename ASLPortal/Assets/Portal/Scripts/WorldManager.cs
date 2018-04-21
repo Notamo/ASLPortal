@@ -9,6 +9,8 @@ public class WorldManager : MonoBehaviour {
     public Dictionary<int, World> worlds;
 
     public bool masterClient = false;
+    public int numWorlds = 0;
+
     private ObjectInteractionManager objManager;
 
     // Use this for initialization
@@ -23,7 +25,31 @@ public class WorldManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	}
+    }
+
+    public void InitializeAll()
+    {
+        foreach (KeyValuePair<int, World> pair in worlds)
+        {
+            pair.Value.Init();
+        }
+    }
+
+    public void FindWorlds()
+    {
+        World[] worldChildren = GetComponentsInChildren<World>();
+        Debug.Log("Found " + worldChildren.Length + " worlds");
+        foreach (World world in worldChildren)
+        {
+            int worldId = world.GetComponent<PhotonView>().viewID;
+            if (!worlds.ContainsKey(worldId))
+            {
+                worlds.Add(worldId, world);
+            }
+            world.Init();
+        }
+        numWorlds = worlds.Count;
+    }
 
     //Create a new world by prefab name
     //and add it
@@ -126,7 +152,6 @@ public class WorldManager : MonoBehaviour {
         GameObject toSet = PhotonView.Find(toSetId).gameObject;
 
         toSet.transform.parent = world.transform;
-        world.defaultPortalID = toSetId;
     }
 
     #endregion

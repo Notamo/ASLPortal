@@ -97,7 +97,7 @@ public class UserCursor : MonoBehaviour
         {
             rotation += 45.0f;
         }
-        Vector3 f = Quaternion.AngleAxis(rotation, Vector3.up) * -Vector3.forward;
-        this.transform.rotation *= Quaternion.FromToRotation(-Vector3.forward, f);
+        // Apply rotation around y axis to current cursor direction
+        this.transform.rotation *= Quaternion.AngleAxis(rotation, Vector3.up);
     }
 }
