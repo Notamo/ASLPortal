@@ -15,6 +15,7 @@ namespace UWBNetworkingPackage
         //WorldManager Events
         public const byte EV_WORLD_ADD = 30;    //add a world to the worldManager
         public const byte EV_WORLD_ADD_TO = 31;    //add an entity to one of the worlds
+        public const byte EV_MASTER_LOAD = 32;  //master just created worlds
 
         //PortalManager Events
         public const byte EV_PORTAL_REG = 40;

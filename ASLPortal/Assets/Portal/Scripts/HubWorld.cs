@@ -13,11 +13,11 @@ public class HubWorld : World {
     }
 
 	// Use this for initialization
-	public override void Start () {
-        base.Start();
+	public override void Init () {
+        base.Init();
         Debug.Log("HubWorld " + name);
 
-        Camera cam = GameObject.Find("Main Camera").GetComponent<Camera>();
+        Camera cam = Camera.main;
 
         Debug.Assert(defaultPortal != null);
         selector.Initialize(cam, defaultPortal);

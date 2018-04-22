@@ -103,7 +103,7 @@ public class PortalManager : MonoBehaviour
             return;
         }
 
-        Debug.Log("Requesting Portal Registration");
+        Debug.Log("Requesting Portal Link");
         RaiseEventOptions options = new RaiseEventOptions();
         options.Receivers = ReceiverGroup.MasterClient;
 
@@ -178,52 +178,36 @@ public class PortalManager : MonoBehaviour
     //As of now, it's a dual link all the time
     private bool LinkPortal(int sourceID, int destinationID)
     {
-        if(!player)
+        if (IsIDRegistered(sourceID) && IsIDRegistered(destinationID))
         {
-            Debug.LogError("Cannot Link Portal! No player object available");
-            return false;
+            if (portalSet[sourceID].destinationPortal != null)
+                UnlinkPortal(sourceID);
+
+            //portalSet[sourceID].Initialize(portalSet[destinationID], player);
+            portalSet[sourceID].LinkDestination(portalSet[destinationID]);
+            return true;
         }
         else
         {
-            if (IsIDRegistered(sourceID) && IsIDRegistered(destinationID))
-            {
-                if (portalSet[sourceID].destinationPortal != null)
-                    UnlinkPortal(sourceID);
-
-                //portalSet[sourceID].Initialize(portalSet[destinationID], player);
-                portalSet[sourceID].LinkDestination(portalSet[destinationID]);
-                return true;
-            }
-            else
-            {
-                Debug.Log("Cannot Link Portal! One or more portals is not registered");
-                return false;
-            }
+            Debug.Log("Cannot Link Portal! One or more portals is not registered");
+            return false;
         }
     }
 
     private bool UnlinkPortal(int sourceID)
     {
-        if (!player)
+        if (IsIDRegistered(sourceID))
         {
-            Debug.LogError("Cannot Unlink Portal! No player object available");
-            return false;
+            if (portalSet[sourceID].destinationPortal != null)
+            {
+                portalSet[sourceID].Close();
+            }
+            return true;
         }
         else
         {
-            if (IsIDRegistered(sourceID))
-            {
-                if (portalSet[sourceID].destinationPortal != null)
-                {
-                    portalSet[sourceID].Close();
-                }
-                return true;
-            }
-            else
-            {
-                Debug.Log("Cannot Unlink Portal! Source not registered");
-                return false;
-            }
+            Debug.Log("Cannot Unlink Portal! Source not registered");
+            return false;
         }
     }
 
