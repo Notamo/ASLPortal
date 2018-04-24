@@ -33,7 +33,6 @@ public class MasterController : MonoBehaviour
     //Setup State
     private bool setupComplete = false;
 
-
     // Use this for initialization
     void Start()
     {

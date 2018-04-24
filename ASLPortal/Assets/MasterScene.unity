@@ -165,10 +165,10 @@ MonoBehaviour:
     type: 2}
   worldPrefabs:
   - HubWorld
-  - RedCubeWorld
-  - GreenCubeWorld
   - BlueCubeWorld
-  - WebCamWorld
+  - GreenCubeWorld
+  - RedCubeWorld
+  - 260M World
   linkPanel: {fileID: 439690535}
 --- !u!224 &174584114
 RectTransform:
@@ -414,6 +414,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   masterClient: 1
+  numWorlds: 0
 --- !u!4 &544202707
 Transform:
   m_ObjectHideFlags: 0

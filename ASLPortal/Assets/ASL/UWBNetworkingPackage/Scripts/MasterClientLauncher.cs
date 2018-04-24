@@ -64,7 +64,7 @@ namespace UWBNetworkingPackage
                         {
                             //        for each mesh in the database, create a game object to represent
                             //        and display the mesh in the scene
-                            GameObject obj1 = new GameObject(T.name);
+                            GameObject obj1 = new GameObject(T.name);    
 
                             //        add a mesh filter to the object and assign it the mesh
                             MeshFilter filter = obj1.AddComponent<MeshFilter>();
@@ -78,6 +78,8 @@ namespace UWBNetworkingPackage
 
                             obj1.tag = "Room";
                             obj1.AddComponent<TangoRoom>();
+
+                            obj1.transform.SetParent(T.parent, false);
                         }
                     }
                 }

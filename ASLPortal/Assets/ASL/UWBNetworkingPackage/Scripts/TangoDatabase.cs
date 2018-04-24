@@ -24,6 +24,7 @@ namespace UWBNetworkingPackage
             public int ID;
             public int PhotonPlayer;
             public string name;
+            public Transform parent;            //added so we can specify location
         }
 
         /// <summary>
@@ -249,6 +250,27 @@ namespace UWBNetworkingPackage
             T.ID = count; //set id
             //T.PhotonPlayer = playerID;
             T.name = (string)(name); //creates name based on input name
+            lock (Rooms)
+            {
+                Rooms.Add(T); //adds room to list
+            }
+            //_meshes = newMesh;
+            LastUpdate = DateTime.Now;
+        }
+
+        //test for portal project
+        public static void UpdateMesh(byte[] newMesh, string name, Transform parent)
+        {
+            TangoRoom T = new TangoRoom(); //creates a new room
+            T.isDirty = true; //marks that it needs to be rendered
+            T._meshes = newMesh; //init byte array
+            count++; //increment count
+            T.ID = count; //set id
+            //T.PhotonPlayer = playerID;
+            T.name = (string)(name); //creates name based on input name
+
+            T.parent = parent;
+
             lock (Rooms)
             {
                 Rooms.Add(T); //adds room to list

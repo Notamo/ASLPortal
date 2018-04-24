@@ -193,7 +193,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1414279324223486}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 40, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4043265624195594}
@@ -475,6 +475,7 @@ MonoBehaviour:
   worldManager: {fileID: 0}
   defaultPortalXform: {fileID: 4205778967348498}
   defaultPortal: {fileID: 0}
+  defaultPortalViewType: 1
   selector: {fileID: 114779237146279966}
 --- !u!114 &114212229641967182
 MonoBehaviour:
