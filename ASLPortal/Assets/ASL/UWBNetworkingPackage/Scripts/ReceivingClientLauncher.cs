@@ -114,6 +114,9 @@ namespace UWBNetworkingPackage
 
                             obj1.tag = "Room";
                             obj1.AddComponent<TangoRoom>();
+
+                            Transform parentXform = PhotonView.Find(T.parentID).transform;
+                            obj1.transform.SetParent(parentXform, false);
                         }
                     }
                 }
@@ -617,18 +620,23 @@ namespace UWBNetworkingPackage
 
             using (var stream = client.GetStream())
             {
+                byte[] parentData = new byte[4];
                 byte[] data = new byte[T.size];
 
                 UnityEngine.Debug.Log("Start receiving mesh " + data.Length);
                 using (MemoryStream ms = new MemoryStream())
                 {
+                    //Get the parent of the mesh
+                    stream.Read(parentData, 0, 4);
+                    int parentID = BitConverter.ToInt32(parentData, 0);
+
                     int numBytesRead;
                     while ((numBytesRead = stream.Read(data, 0, data.Length)) > 0)
                     {
                         ms.Write(data, 0, numBytesRead);
                     }
                     UnityEngine.Debug.Log("finish receiving mesh: size = " + ms.Length);
-                    TangoDatabase.UpdateMesh(ms.ToArray(), T.name);
+                    TangoDatabase.UpdateMesh(ms.ToArray(), T.name, parentID);
                 }
             }
 
@@ -662,7 +670,6 @@ namespace UWBNetworkingPackage
         void SendTangoMeshThread(string networkConfig)
         {
             var networkConfigArray = networkConfig.Split(':');
-
 
             TcpClient client = new TcpClient();
             client.Connect(IPAddress.Parse(networkConfigArray[0]), Int32.Parse(networkConfigArray[1]));

@@ -109,6 +109,6 @@ public class RoomLoader : MonoBehaviour {
     private void ReadRoom(string filePath, string name)
     {
         byte[] b = File.ReadAllBytes(filePath);
-        TangoDatabase.UpdateMesh(b, name, parent);
+        TangoDatabase.UpdateMesh(b, name, parent.GetComponent<PhotonView>().viewID);
     }
 }

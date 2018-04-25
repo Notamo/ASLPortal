@@ -79,7 +79,8 @@ namespace UWBNetworkingPackage
                             obj1.tag = "Room";
                             obj1.AddComponent<TangoRoom>();
 
-                            obj1.transform.SetParent(T.parent, false);
+                            Transform parentXform = PhotonView.Find(T.parentID).transform;
+                            obj1.transform.SetParent(parentXform, false);
                         }
                     }
                 }
@@ -239,6 +240,11 @@ namespace UWBNetworkingPackage
             using (NetworkStream stream = client.GetStream())
             {
                 TangoDatabase.TangoRoom T = TangoDatabase.GetRoomByName(name);
+
+                //write the parent id
+                var parentData = BitConverter.GetBytes(T.parentID);
+                stream.Write(parentData, 0, parentData.Length);
+
                 var data = T._meshes;
                 stream.Write(data, 0, data.Length);
                 UnityEngine.Debug.Log("Mesh sent: mesh size = " + data.Length);
