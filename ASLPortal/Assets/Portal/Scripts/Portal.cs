@@ -52,20 +52,12 @@ public class Portal : MonoBehaviour
             case ViewType.VIRTUAL:
                 break;
             case ViewType.PHYSICAL:
-                WebCamDevice[] devices = WebCamTexture.devices;
-                for (int i = 0; i < devices.Length; i++)
-                    Debug.Log(devices[i].name);
-
-                webCamTexture = new WebCamTexture();
-                Debug.Log("WebCamTexture created");
-
-                webCamTexture.Play();
-
-                Debug.Log(webCamTexture.width + "x" + webCamTexture.height);
+                InitWebCam();
                 break;
             case ViewType.HYBRID:
+                InitWebCam();
                 Debug.LogError("Error: Cannot Initialize portal. Hybrid view type not yet implemented!");
-                return;
+                break;
             default:
                 Debug.LogError("Error: Cannot Initialize portal. Invalid ViewType for initialization!");
                 return;
@@ -76,6 +68,20 @@ public class Portal : MonoBehaviour
 
         //set up the copy camera
         InitCopyCam();
+    }
+
+    private void InitWebCam()
+    {
+        WebCamDevice[] devices = WebCamTexture.devices;
+        for (int i = 0; i < devices.Length; i++)
+            Debug.Log(devices[i].name);
+
+        webCamTexture = new WebCamTexture();
+        Debug.Log("WebCamTexture created");
+
+        webCamTexture.Play();
+
+        Debug.Log(webCamTexture.width + "x" + webCamTexture.height);
     }
 
     private void InitCopyCam()
@@ -95,24 +101,26 @@ public class Portal : MonoBehaviour
         Debug.Log("Linking to Portal with ViewType: " + other.viewType);
 
         Material renderMat = null;
+        Renderer renderer = renderQuad.GetComponent<Renderer>();
         switch (other.viewType)
         {
             case ViewType.VIRTUAL:
                 if (copyCamera == null) InitCopyCam();
                 renderMat = new Material(copyCamMat);
                 renderMat.mainTexture = copyCamera.targetTexture;
-                renderQuad.GetComponent<MeshRenderer>().material = renderMat;
+                renderer.material = renderMat;
                 break;
             case ViewType.PHYSICAL:
-
                 renderMat = new Material(webCamMat);
-                Renderer renderer = renderQuad.GetComponent<Renderer>();
+                renderMat.mainTexture = other.webCamTexture;
                 renderer.material = renderMat;
-                renderer.material.mainTexture = other.webCamTexture;
                 break;
             case ViewType.HYBRID:
+                renderMat = new Material(webCamMat);
+                renderMat.mainTexture = other.webCamTexture;
+                renderer.material = renderMat;
                 Debug.LogError("Error: Cannot Link. Hybrid view type not yet implemented!");
-                return;
+                break;
             default:
                 Debug.LogError("Error: Cannot Link. Other portal not initialized!");
                 return;

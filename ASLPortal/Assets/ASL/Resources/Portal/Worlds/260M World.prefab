@@ -326,7 +326,7 @@ MonoBehaviour:
   worldManager: {fileID: 0}
   defaultPortalXform: {fileID: 4531119245600226}
   defaultPortal: {fileID: 0}
-  defaultPortalViewType: 1
+  defaultPortalViewType: 3
   selector: {fileID: 114288207543032264}
   roomLoader: {fileID: 0}
   roomName: UW1_260
