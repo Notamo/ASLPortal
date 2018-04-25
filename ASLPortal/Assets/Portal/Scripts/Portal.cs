@@ -55,8 +55,7 @@ public class Portal : MonoBehaviour
                 InitWebCam();
                 break;
             case ViewType.HYBRID:
-                InitWebCam();
-                Debug.LogError("Error: Cannot Initialize portal. Hybrid view type not yet implemented!");
+                InitWebCam("USB2.0 Camera");
                 break;
             default:
                 Debug.LogError("Error: Cannot Initialize portal. Invalid ViewType for initialization!");
@@ -70,11 +69,17 @@ public class Portal : MonoBehaviour
         InitCopyCam();
     }
 
-    private void InitWebCam()
+    private void InitWebCam(string preferredWebCam = "")
     {
+        string selectedWebCam = "";
         WebCamDevice[] devices = WebCamTexture.devices;
         for (int i = 0; i < devices.Length; i++)
+        {
             Debug.Log(devices[i].name);
+            selectedWebCam = devices[i].name;
+            if(devices[i].name == preferredWebCam) 
+                break;
+        }
 
         webCamTexture = new WebCamTexture();
         Debug.Log("WebCamTexture created");
@@ -119,7 +124,6 @@ public class Portal : MonoBehaviour
                 renderMat = new Material(webCamMat);
                 renderMat.mainTexture = other.webCamTexture;
                 renderer.material = renderMat;
-                Debug.LogError("Error: Cannot Link. Hybrid view type not yet implemented!");
                 break;
             default:
                 Debug.LogError("Error: Cannot Link. Other portal not initialized!");
