@@ -73,6 +73,13 @@ public class Portal : MonoBehaviour
     {
         string selectedWebCam = "";
         WebCamDevice[] devices = WebCamTexture.devices;
+        if(devices.Length == 0)
+        {
+            // No webcams, set to virtual portal type
+            this.viewType = ViewType.VIRTUAL;
+            return;
+        }
+
         for (int i = 0; i < devices.Length; i++)
         {
             Debug.Log(devices[i].name);
