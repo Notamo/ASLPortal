@@ -37,7 +37,7 @@ public class PortalSelector : MonoBehaviour {
 	void Update () {
         if (sourcePortal != null && playerCam != null)
         {
-            transform.position = sourcePortal.transform.position - 1.5f * sourcePortal.transform.right;
+            transform.position = sourcePortal.transform.position + 1.5f * sourcePortal.transform.right;
             transform.forward = sourcePortal.transform.forward;
 
             //left mouse click
