@@ -19,8 +19,8 @@ public class MasterController : MonoBehaviour
 
     //Player
     public GameObject playerAvatar = null;
-    public string AvatarName = "MasterAvatar";
-    public Color AvatarColor = Color.white;
+    public string avatarName = "MasterAvatar";
+    public Color avatarColor = Color.white;
     public Vector3 SpawnPosition = new Vector3(0, 1, 0);
     public GameObject mCursorPrefab = null;
 
@@ -104,21 +104,22 @@ public class MasterController : MonoBehaviour
     {
         //make the user avatar/camera
         playerAvatar = objManager.InstantiateOwnedObject("UserAvatar") as GameObject;
-        playerAvatar.name = AvatarName;
+        PlayerAvatar avatarComponent = playerAvatar.GetComponent<PlayerAvatar>();
 
-        playerAvatar.transform.localPosition = SpawnPosition;
-        mainCamera.transform.SetParent(playerAvatar.transform);
-        mainCamera.transform.localPosition = .5f * playerAvatar.transform.up;
-
-        //add the player controller after so other players can't manipulate it
-        PlayerController pc = playerAvatar.AddComponent<PlayerController>() as PlayerController;
-        pc.userCamera = mainCamera;
-        pc.controller = this;
-        pc.SetColor(AvatarColor);
-        pc.SetCursor(mCursorPrefab);
-
+        AvatarInfo avatarProperties = new AvatarInfo(PhotonNetwork.player.ID,
+                                                    playerAvatar.GetComponent<PhotonView>().viewID,
+                                                    SpawnPosition,
+                                                    avatarColor);
+        avatarComponent.Initialize(avatarProperties, mainCamera, this, mCursorPrefab);
         portalManager.player = playerAvatar;
-    }
+
+        //send a message off so it can be properly initialized
+        Debug.Log("Sending Color: " + avatarProperties.color);
+        RaiseEventOptions options = new RaiseEventOptions();
+        options.Receivers = ReceiverGroup.Others;
+        PhotonNetwork.RaiseEvent(UWBNetworkingPackage.ASLEventCode.EV_AVATAR_MAKE, avatarProperties, true, options);
+    
+        }
 
 
     //PlayerCreatePortal
@@ -149,8 +150,12 @@ public class MasterController : MonoBehaviour
         switch (eventCode)
         {
             case UWBNetworkingPackage.ASLEventCode.EV_MASTER_LOAD:
-                Debug.Log("EV_REG: " + (int)content);
+                Debug.Log("EV_MASTER_LOAD: " + (int)content);
                 ProcessMasterLoad();
+                break;
+            case UWBNetworkingPackage.ASLEventCode.EV_AVATAR_MAKE:
+                Debug.Log("E_AVATAR_MAKE: ");
+                ProcessAvatarMake((AvatarInfo)content);
                 break;
         }
     }
@@ -173,6 +178,33 @@ public class MasterController : MonoBehaviour
 
             setupComplete = true;
         }
+    }
+
+    //Receiving an avatar another user has made
+    //Initialize our copy to have the same properties
+    private void ProcessAvatarMake(AvatarInfo info)
+    {
+        Debug.Log("User Made Avatar, initializing");
+        Debug.Log("Avatar: " + 
+                  "{playerID: " + info.playerID + 
+                  ", viewID: " + info.viewID + 
+                  ", spawnPosition: " + info.spawnPosition +
+                  ", color: " + info.color + "}");
+         PhotonView view = PhotonView.Find(info.viewID);
+         if (view == null)
+         {
+             Debug.LogError("Error: No PhotonView Component!");
+             return;
+         }
+
+         PlayerAvatar newAvatar = view.GetComponent<PlayerAvatar>();
+         if (newAvatar == null)
+         {
+             Debug.LogError("Error: No PlayerAvatar Component!");
+             return;
+         }
+
+         newAvatar.Initialize(info, null, null, null);
     }
     #endregion
 }

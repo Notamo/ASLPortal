@@ -63,7 +63,7 @@ public class Portal : MonoBehaviour
         }
 
         if (user != null)
-            userCamera = user.GetComponent<PlayerController>().userCamera;
+            userCamera = user.GetComponent<PlayerAvatar>().userCamera;
 
         //set up the copy camera
         InitCopyCam();

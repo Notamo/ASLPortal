@@ -31,6 +31,8 @@ internal static class CustomTypes
         PhotonPeer.RegisterType(typeof(Vector3), (byte)'V', SerializeVector3, DeserializeVector3);
         PhotonPeer.RegisterType(typeof(Quaternion), (byte)'Q', SerializeQuaternion, DeserializeQuaternion);
         PhotonPeer.RegisterType(typeof(PhotonPlayer), (byte)'P', SerializePhotonPlayer, DeserializePhotonPlayer);
+        PhotonPeer.RegisterType(typeof(Color), (byte)'C', SerializeColor, DeserializeColor);
+        PhotonPeer.RegisterType(typeof(AvatarInfo), (byte)'A', SerializeAvatarInfo, DeserializeAvatarInfo);
     }
 
 
@@ -173,5 +175,82 @@ internal static class CustomTypes
         }
     }
 
+    public static readonly byte[] memColor = new byte[4 * sizeof(float)]; //4 floats (r, g, b, a)
+
+    private static short SerializeColor(StreamBuffer outStream, object customObject)
+    {
+        Color color = (Color)customObject;
+       
+        lock(memColor)
+        {
+            byte[] bytes = memColor;
+            int index = 0;
+            Protocol.Serialize(color.r, bytes, ref index);
+            Protocol.Serialize(color.g, bytes, ref index);
+            Protocol.Serialize(color.b, bytes, ref index);
+            Protocol.Serialize(color.a, bytes, ref index);
+            outStream.Write(bytes, 0, 4 * 4);
+        }
+
+        return 4 * 4;
+    }
+
+    private static object DeserializeColor(StreamBuffer inStream, short length)
+    {
+        Color color = new Color();
+        lock(memColor)
+        {
+            inStream.Read(memColor, 0, 4 * 4);
+            int index = 0;
+            Protocol.Deserialize(out color.r, memColor, ref index);
+            Protocol.Deserialize(out color.g, memColor, ref index);
+            Protocol.Deserialize(out color.b, memColor, ref index);
+            Protocol.Deserialize(out color.a, memColor, ref index);
+        }
+        return color;
+    }
+
+    public static readonly byte[] memAvatarInfo = new byte[4 +          //int playerID
+                                                           4 +          //int viewID
+                                                           4 * 4 +      //Color color
+                                                           3 * 4];      //Vector3 spawnPosition
+    private static short SerializeAvatarInfo(StreamBuffer outStream, object customObject)
+    {
+        AvatarInfo avatarInfo = (AvatarInfo)customObject;
+
+        int index = 0;
+        lock(memAvatarInfo)
+        {
+            byte[] bytes = memAvatarInfo;
+
+            Protocol.Serialize(avatarInfo.playerID, bytes, ref index);
+            Protocol.Serialize(avatarInfo.viewID, bytes, ref index);
+            outStream.Write(bytes, 0, 8);
+
+            index += SerializeVector3(outStream, avatarInfo.spawnPosition);
+            index += SerializeColor(outStream, avatarInfo.color);
+        }
+        return 36;
+    }
+
+    private static object DeserializeAvatarInfo(StreamBuffer inStream, short length)
+    {
+        AvatarInfo avatarInfo = new AvatarInfo();
+        int index = 0;
+        lock(memAvatarInfo)
+        {
+            inStream.Read(memAvatarInfo, 0, 8);
+            Protocol.Deserialize(out avatarInfo.playerID, memAvatarInfo, ref index);
+            Protocol.Deserialize(out avatarInfo.viewID, memAvatarInfo, ref index);
+
+            avatarInfo.spawnPosition = (Vector3)DeserializeVector3(inStream, 12);
+            index += 12;
+
+            avatarInfo.color = (Color)DeserializeColor(inStream, 16);
+            index += 16;
+        }
+
+        return avatarInfo;
+    }
     #endregion
 }

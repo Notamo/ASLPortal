@@ -2,7 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour {
+//Data struct used for properties across the network
+[System.Serializable]
+public struct AvatarInfo
+{
+    [SerializeField] public int playerID;
+    [SerializeField] public int viewID;
+    [SerializeField] public Vector3 spawnPosition;
+    [SerializeField] public Color color;
+
+    public AvatarInfo(int playerID, int viewID, Vector3 spawnPosition, Color color)
+    {
+        this.playerID = playerID;
+        this.viewID = viewID;
+        this.spawnPosition = spawnPosition;
+        this.color = color;
+    }
+}
+
+
+public class PlayerAvatar : MonoBehaviour {
+    private bool initialized = false;
+    private bool controlled = false;
 
     public float movementSpeed = 10.0f;
     public float rotateSpeed = 10.0f;
@@ -23,6 +44,23 @@ public class PlayerController : MonoBehaviour {
         Debug.Assert(rigidBody != null);
     }
 
+    public void Initialize(AvatarInfo avatarProperties, Camera mainCamera, MasterController mc, GameObject cursorPrefab)
+    {
+        SetColor(avatarProperties.color);
+        transform.localPosition = avatarProperties.spawnPosition;
+
+        if (avatarProperties.playerID == PhotonNetwork.player.ID) {
+            controlled = true;
+            controller = mc;
+            userCamera = mainCamera;
+            userCamera.transform.SetParent(transform);
+            userCamera.transform.localPosition = 0.5f * transform.up;
+            SetCursor(cursorPrefab);
+        }
+
+        initialized = true;
+    }
+
     public void SetColor(Color toSet)
     {
         GetComponent<MeshRenderer>().material.color = toSet;
@@ -35,9 +73,14 @@ public class PlayerController : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        PlayerMovementControls();
+        if (!initialized)
+            return;
 
-        PlayerPortalControls();
+        if (controlled)
+        {
+            PlayerMovementControls();
+            PlayerPortalControls();
+        }
     }
     private void PlayerPortalControls()
     {

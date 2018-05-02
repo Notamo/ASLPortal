@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 136242079468161262}
   - component: {fileID: 23658665133206178}
   - component: {fileID: 54047513857090426}
+  - component: {fileID: 114620382917059632}
   m_Layer: 0
   m_Name: UserAvatar
   m_TagString: Untagged
@@ -97,6 +98,22 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &114620382917059632
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1249044546244228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08ef18e9b92a438458de265715b6ce4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementSpeed: 10
+  rotateSpeed: 10
+  acceleration: 10
+  userCamera: {fileID: 0}
+  controller: {fileID: 0}
 --- !u!136 &136242079468161262
 CapsuleCollider:
   m_ObjectHideFlags: 1
