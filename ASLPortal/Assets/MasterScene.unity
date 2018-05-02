@@ -158,8 +158,8 @@ MonoBehaviour:
   mainCamera: {fileID: 1875337323}
   playerAvatar: {fileID: 1249044546244228, guid: bc029581ebca61141a6c761101a6762d,
     type: 2}
-  avatarName: MasterAvatar
-  avatarColor: {r: 0.2564338, g: 0.6838235, b: 0.5600279, a: 1}
+  AvatarName: MasterAvatar
+  AvatarColor: {r: 1, g: 0, b: 0, a: 1}
   SpawnPosition: {x: 0, y: 1, z: 0}
   mCursorPrefab: {fileID: 1009970958297572, guid: e4345a33635a45f48be94b727f059d65,
     type: 2}

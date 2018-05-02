@@ -46,7 +46,7 @@ public class UserCursor : MonoBehaviour
         {
             if (hitInfo.collider.gameObject != null)
             {
-                if (hitInfo.collider.gameObject.name == "Portal")
+                if (hitInfo.collider.gameObject.name.Contains("Portal"))
                     return hitInfo.collider.gameObject;
                 else if (hitInfo.collider.gameObject.name == "ColliderQuad")
                     return hitInfo.collider.transform.parent.gameObject;

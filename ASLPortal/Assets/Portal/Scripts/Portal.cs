@@ -33,7 +33,7 @@ public class Portal : MonoBehaviour
     private WebCamTexture webCamTexture = null;
 
     // Use this for initialization
-    void Start()
+    public void Start()
     {
         Debug.Assert(copyCameraPrefab != null);
         Debug.Assert(renderQuad != null);
@@ -43,7 +43,7 @@ public class Portal : MonoBehaviour
         Debug.Assert(webCamMat != null);
     }
 
-    public void Initialize(ViewType viewType, GameObject user)
+    public virtual void Initialize(ViewType viewType, GameObject user)
     {
         this.viewType = viewType;
 
