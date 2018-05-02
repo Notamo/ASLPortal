@@ -8,10 +8,8 @@ public class CircularPortal : Portal
     private const int resolution = 36;
     protected Mesh mMesh;
 
-    public override void Initialize(ViewType viewType, GameObject user)
+    void Awake()
     {
-        base.Initialize(viewType, user);
-
         mMesh = GetComponentInChildren<MeshFilter>().mesh;
         mMesh.Clear();
 

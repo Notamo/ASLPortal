@@ -43,7 +43,7 @@ public class Portal : MonoBehaviour
         Debug.Assert(webCamMat != null);
     }
 
-    public virtual void Initialize(ViewType viewType, GameObject user)
+    public void Initialize(ViewType viewType, GameObject user)
     {
         this.viewType = viewType;
 
