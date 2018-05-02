@@ -46,6 +46,21 @@ public class PortalManager : MonoBehaviour
     }
 
     /*
+     * Instantiate and initialize the Portal Prefabs
+     */
+    public Portal MakeCircPortal(Vector3 position, Vector3 forward, Vector3 up, Portal.ViewType vType = Portal.ViewType.VIRTUAL)
+    {
+        GameObject newPortal = objManager.InstantiateOwnedObject("CircularPortal") as GameObject;
+        newPortal.transform.position = position;
+        newPortal.transform.rotation = Quaternion.LookRotation(forward, up);
+
+        Portal p = newPortal.GetComponent<Portal>();
+        p.Initialize(vType, player);
+
+        return p;// newPortal.GetComponent<Portal>();
+    }
+
+    /*
      * Portal System Action Requests
      * (Pre-Master Client Verification)
      */
