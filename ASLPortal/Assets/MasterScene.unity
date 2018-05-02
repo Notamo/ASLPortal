@@ -731,7 +731,7 @@ Prefab:
     - target: {fileID: 114961132145658658, guid: c42b35311518a4d4fb01b26d9f17a5a8,
         type: 2}
       propertyPath: RoomName
-      value: ASLPortalDemohh
+      value: ASLPortalDemo
       objectReference: {fileID: 0}
     - target: {fileID: 114065975440448632, guid: c42b35311518a4d4fb01b26d9f17a5a8,
         type: 2}
