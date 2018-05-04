@@ -114,10 +114,19 @@ MonoBehaviour:
   MasterClient: 0
   portalMgr: {fileID: 114933201357081878}
   mainCamera: {fileID: 0}
-  AvatarName: MasterAvatar
+  playerAvatar: {fileID: 0}
+  AvatarName: 4d6173746572417661746172
   SpawnPos: {x: 0, y: 1, z: 0}
-  PlaneName: GreenPlane
+  Plane: {fileID: 0}
+  PlaneName: 477265656e506c616e65
+  portalMade: 0
+  worldMade: 0
+  avatarMade: 0
+  pairMade: 0
+  objManager: {fileID: 0}
   linkPanel: {fileID: 0}
+  src: -1
+  dest: -1
 --- !u!114 &114845557701226840
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -130,6 +139,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   masterClient: 0
+  numWorlds: 0
 --- !u!114 &114933201357081878
 MonoBehaviour:
   m_ObjectHideFlags: 1

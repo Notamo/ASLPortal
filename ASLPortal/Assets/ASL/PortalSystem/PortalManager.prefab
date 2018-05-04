@@ -52,5 +52,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MasterClient: 1
-  mainCamera: {fileID: 0}
-  portalSourcePrefab: {fileID: 0}
+  player: {fileID: 0}
