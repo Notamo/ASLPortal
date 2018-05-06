@@ -195,7 +195,7 @@ public class PortalManager : MonoBehaviour
     {
         if (IsIDRegistered(sourceID) && IsIDRegistered(destinationID))
         {
-            if (portalSet[sourceID].destinationPortal != null)
+            if (portalSet[sourceID].GetDest() != null)
                 UnlinkPortal(sourceID);
 
             //portalSet[sourceID].Initialize(portalSet[destinationID], player);
@@ -213,7 +213,7 @@ public class PortalManager : MonoBehaviour
     {
         if (IsIDRegistered(sourceID))
         {
-            if (portalSet[sourceID].destinationPortal != null)
+            if (portalSet[sourceID].GetDest() != null)
             {
                 portalSet[sourceID].Close();
             }

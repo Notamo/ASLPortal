@@ -5,33 +5,28 @@ using UnityEngine;
 
 public class Portal : MonoBehaviour
 {
-    //The type of view a portal provides in any connected
-    //portal's renderQuad
+    // The type of view this portal uses as a destination
     public enum ViewType
     {
         NONE,
-        VIRTUAL,      //displays the unity scene
-        PHYSICAL,     //displays a webcam feed
-        HYBRID        //mix of the two
+        VIRTUAL,      //displays virtual destination
+        PHYSICAL,     //displays a webcam feed of physical destination
+        HYBRID        //displays a webcam feed for virtual destination
     };
-
     ViewType viewType = ViewType.VIRTUAL;
+    private Portal destinationPortal = null;    //destination portal ref
 
+    public GameObject renderQuad = null;        //quad child in portal prefab
+    public GameObject copyCameraPrefab = null;  //portal cam prefab
+    private Camera copyCamera = null;           //portal cam ref
+    private Camera userCamera = null;           //user cam ref
 
-    public Camera userCamera = null;
-    public Portal destinationPortal = null;
+    public Material idleMat = null;             //material for idling
+    public Material copyCamMat = null;          //material for using a portal cam
+    public Material webCamMat = null;           //material for using a webcam
+    private WebCamTexture webCamTexture = null; //texure for using a webcam
 
-    public GameObject renderQuad = null;
-    public GameObject copyCameraPrefab = null;
-    private Camera copyCamera = null;
-
-    public Material idleMat = null;     //material for idling
-    public Material copyCamMat = null;      //material for using a copyCam
-    public Material webCamMat = null;
-
-    //if we are a camera portal
-    private WebCamTexture webCamTexture = null;
-
+    #region INITIALIZATION
     // Use this for initialization
     public void Start()
     {
@@ -43,19 +38,21 @@ public class Portal : MonoBehaviour
         Debug.Assert(webCamMat != null);
     }
 
+    /*
+     * Initialize this portal to given view type,
+     * and try to get user's camera
+     */
     public void Initialize(ViewType viewType, GameObject user)
     {
+        // Set view type and initialize accordingly 
         this.viewType = viewType;
-
         switch (viewType)
         {
             case ViewType.VIRTUAL:
                 break;
             case ViewType.PHYSICAL:
-                InitWebCam();
-                break;
             case ViewType.HYBRID:
-                InitWebCam("USB2.0 Camera");
+                InitWebCam();       //need to query user for preferred device name
                 break;
             default:
                 Debug.LogError("Error: Cannot Initialize portal. Invalid ViewType for initialization!");
@@ -69,9 +66,12 @@ public class Portal : MonoBehaviour
         InitCopyCam();
     }
 
+    /*
+     * Initialize webcam to preferred device
+     */
     private void InitWebCam(string preferredWebCam = "")
     {
-        string selectedWebCam = "";
+        // Get all potential webcams, check if any exist
         WebCamDevice[] devices = WebCamTexture.devices;
         if(devices.Length == 0)
         {
@@ -80,6 +80,8 @@ public class Portal : MonoBehaviour
             return;
         }
 
+        // Try finding the preferred webcam
+        string selectedWebCam = "";
         for (int i = 0; i < devices.Length; i++)
         {
             Debug.Log(devices[i].name);
@@ -88,48 +90,61 @@ public class Portal : MonoBehaviour
                 break;
         }
 
-        webCamTexture = new WebCamTexture();
-        Debug.Log("WebCamTexture created");
+        // Create webcam texture using preferred device or default
+        if (selectedWebCam != "")
+            webCamTexture = new WebCamTexture(selectedWebCam);
+        else
+            webCamTexture = new WebCamTexture();
 
+        // Start webcam 
         webCamTexture.Play();
-
-        Debug.Log(webCamTexture.width + "x" + webCamTexture.height);
     }
 
+    /*
+     * Initialize portal camera
+     */
     private void InitCopyCam()
     {
+        // If no user, try to use main camera
         if (userCamera == null)
             userCamera = Camera.main;
 
+        // Instantiate portal camera using prefab, and save ref to it
         if (copyCamera == null)
             copyCamera = Instantiate(copyCameraPrefab, transform).GetComponent<Camera>();
 
-        if (copyCamera.targetTexture != null) copyCamera.targetTexture.Release();
+        // Set target texture to new render texture at current screen size
+        if (copyCamera.targetTexture != null)
+            copyCamera.targetTexture.Release();
         copyCamera.targetTexture = new RenderTexture(Screen.width, Screen.height, 24);
     }
+    #endregion
 
+    #region PORTAL_LINKING
+    /*
+     * Try linking this portal to a destination portal
+     * depending on destination portal's type
+     */
     public void LinkDestination(Portal other)
     {
         Debug.Log("Linking to Portal with ViewType: " + other.viewType);
 
+        // Create new material for render quad on successful link
         Material renderMat = null;
         Renderer renderer = renderQuad.GetComponent<Renderer>();
+
         switch (other.viewType)
         {
+            // Virtual link requires portal cam to render to this portal
             case ViewType.VIRTUAL:
                 if (copyCamera == null) InitCopyCam();
-                renderMat = new Material(copyCamMat);
-                renderMat.mainTexture = copyCamera.targetTexture;
+                renderMat = new Material(copyCamMat) { mainTexture = copyCamera.targetTexture };
                 renderer.material = renderMat;
                 break;
+            // Physical/Hybrid link requires webcam to render to this portal
             case ViewType.PHYSICAL:
-                renderMat = new Material(webCamMat);
-                renderMat.mainTexture = other.webCamTexture;
-                renderer.material = renderMat;
-                break;
             case ViewType.HYBRID:
-                renderMat = new Material(webCamMat);
-                renderMat.mainTexture = other.webCamTexture;
+                renderMat = new Material(webCamMat) { mainTexture = other.webCamTexture };
                 renderer.material = renderMat;
                 break;
             default:
@@ -137,15 +152,42 @@ public class Portal : MonoBehaviour
                 return;
         }
 
+        // Set destination portal reference
         destinationPortal = other;
     }
 
-    // Update is called once per frame
+    /*
+     * Remove link to destination portal
+     */
+    public void Close()
+    {
+        // Unlink from dest portal
+        destinationPortal = null;
+
+        // Release render texture reference
+        renderQuad.GetComponent<MeshRenderer>().material = idleMat;
+
+        // Destroy portal cam
+        Destroy(copyCamera);
+    }
+
+    /*
+     * Get current destination portal
+     */
+    public Portal GetDest()
+    {
+        return destinationPortal;
+    }
+    #endregion
+
+    #region UPDATE
+    /*
+     * Update portal cam when linked to destination portal
+     * using relative transform of user
+     */
     void Update()
     {
-        //sent the user cam info to the destination portal if there is one
-        //relative positions and orientations to the this portal
-        if (destinationPortal != null && userCamera != null)
+        if (destinationPortal != null && copyCamera != null && userCamera != null)
         {
             // Calculate matrix for world to local, reflected across portal
             Matrix4x4 destinationFlipRotation = Matrix4x4.TRS(Vector3.zero, Quaternion.AngleAxis(180.0f, Vector3.up), Vector3.one);
@@ -160,40 +202,37 @@ public class Portal : MonoBehaviour
         }
     }
 
-    //flip a vector across the portal (ignores local y-axis)
-    private Vector3 FlipLocalVector(Vector3 vec) { return new Vector3(-vec.x, vec.y, -vec.z); }
-
-    //Update the copy camera to match the given
-    //relative position and orientations
-    public void UpdateCopyCamera(Vector3 pos, Quaternion rot)
+    /*
+     * Update the copy camera to match the given
+     * relative position and orientation
+     */
+    private void UpdateCopyCamera(Vector3 pos, Quaternion rot)
     {
-        if (copyCamera != null && destinationPortal != null)
-        {
-            // Transform position and rotation to this portal's space
-            copyCamera.transform.position = destinationPortal.transform.TransformPoint(pos);
-            copyCamera.transform.rotation = destinationPortal.transform.rotation * rot;
+        // Transform position and rotation to this portal's space
+        copyCamera.transform.position = destinationPortal.transform.TransformPoint(pos);
+        copyCamera.transform.rotation = destinationPortal.transform.rotation * rot;
 
-            // Calculate clip plane for portal (for culling of objects inbetween destination camera and portal)
-            Vector4 clipPlaneWorldSpace = new Vector4(destinationPortal.transform.forward.x, destinationPortal.transform.forward.y, destinationPortal.transform.forward.z, -Vector3.Dot(destinationPortal.transform.position, destinationPortal.transform.forward));
-            Vector4 clipPlaneCameraSpace = Matrix4x4.Transpose(Matrix4x4.Inverse(copyCamera.worldToCameraMatrix)) * clipPlaneWorldSpace;
+        // Calculate clip plane for portal (for culling of objects inbetween destination camera and portal)
+        Vector4 clipPlaneWorldSpace = new Vector4(destinationPortal.transform.forward.x, destinationPortal.transform.forward.y, destinationPortal.transform.forward.z, -Vector3.Dot(destinationPortal.transform.position, destinationPortal.transform.forward));
+        Vector4 clipPlaneCameraSpace = Matrix4x4.Transpose(Matrix4x4.Inverse(copyCamera.worldToCameraMatrix)) * clipPlaneWorldSpace;
 
-            // Update projection based on new clip plane
-            copyCamera.projectionMatrix = userCamera.CalculateObliqueMatrix(clipPlaneCameraSpace);
-        }
+        // Update projection based on new clip plane
+        copyCamera.projectionMatrix = userCamera.CalculateObliqueMatrix(clipPlaneCameraSpace);
     }
+    #endregion
 
-    //Teleport the object to the destination portal
-    //(if there is one)
+    #region TELEPORTATION
+    /*
+     * Teleport gameobject if:
+     * 1. a destination portal exists
+     * 2. It is not pure physical
+     * 3. the object is on the front side of the source portal
+     * 4. the object is moving towards the portal
+     */
     public void TeleportObject(GameObject go)
     {
         Debug.Log("teleportObject! [" + go.name + "]");
         Debug.Log("Source: " + GetComponent<PhotonView>().viewID.ToString());
-
-        //Teleportation will only happen if:
-        //1. a destination portal exists
-        //2. It is not pure physical
-        //3. the object is on the front side of the source portal
-        //4. the object is moving towards the portal
 
         //1. Is there a destination portal?
         if (destinationPortal == null)
@@ -235,27 +274,38 @@ public class Portal : MonoBehaviour
         TeleportEnter(go);
     }
 
+    /*
+     * Attempt teleportation on collision with portal
+     */
+    void OnTriggerEnter(Collider other)
+    {
+        TeleportObject(other.gameObject);
+    }
 
     /*
-     * Transforms for teleportation
-     * Similar to camera trnsforms -- needs refactoring?
-    */
+     * Prepare a gameobject for teleportation to the destination portal
+     */
     public void TeleportEnter(GameObject go)
     {
+        // Create world to local, flipped around portal transformation
         Matrix4x4 destinationFlipRotation = Matrix4x4.TRS(Vector3.zero, Quaternion.AngleAxis(180.0f, Vector3.up), Vector3.one);
         Matrix4x4 m = destinationFlipRotation * transform.worldToLocalMatrix;
 
+        // Calculate go transform and velocity in source portal space
         Vector3 posInSourceSpace = m.MultiplyPoint(go.transform.position);
         Quaternion rotInSourceSpace = Quaternion.LookRotation(m.GetColumn(2), m.GetColumn(1)) * go.transform.rotation;
         Vector3 velInSourceSpace = m.MultiplyVector(go.GetComponent<Rigidbody>().velocity);
 
+        // Send go and relative transform/velocity to destination portal
         destinationPortal.TeleportExit(go,
                                        posInSourceSpace,
                                        rotInSourceSpace,
                                        velInSourceSpace);
-
     }
 
+    /*
+     * Transform gameobject into destination portal space
+     */
     public void TeleportExit(GameObject go,
                             Vector3 relativePosition,
                             Quaternion relativeRotation,
@@ -266,13 +316,5 @@ public class Portal : MonoBehaviour
         go.transform.rotation = transform.rotation * relativeRotation;
         go.GetComponent<Rigidbody>().velocity = m.MultiplyVector(relativeVelocity);
     }
-
-    public void Close()
-    {
-        // Unlink from dest portal
-        destinationPortal = null;
-
-        // Release render texture reference
-        renderQuad.GetComponent<MeshRenderer>().material = idleMat;
-    }
+    #endregion
 }
