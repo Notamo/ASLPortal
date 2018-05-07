@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Portal : MonoBehaviour
 {
-    // The type of view this portal uses as a destination
+    // The type of view used when set as destination portal
     public enum ViewType
     {
         NONE,

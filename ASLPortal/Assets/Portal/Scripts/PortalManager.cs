@@ -7,14 +7,11 @@ using System.Linq;
 
 public class PortalManager : MonoBehaviour
 {
+    public bool MasterClient = true;                //for propagating events
+    public GameObject player = null;                //to be set on avatar load
 
-    private ObjectInteractionManager objManager;
-
-    public bool MasterClient = true;
-    public GameObject player = null;
-
-    //the set of all available portals
-    private Dictionary<int, Portal> portalSet;
+    private ObjectInteractionManager objManager;    //should always exist in ASL scene
+    private Dictionary<int, Portal> portalSet;      //the set of all available portals
 
     // Use this for initialization
     void Awake()
@@ -24,14 +21,9 @@ public class PortalManager : MonoBehaviour
         PhotonNetwork.OnEventCall += OnEvent;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-    }
-
-
     /*
-     * Instantiate and initialize the Portal Prefabs
+     * Instantiate and initialize a portal with:
+     * position, orientation, view type
      */
     public Portal MakePortal(Vector3 position, Vector3 forward, Vector3 up, Portal.ViewType vType = Portal.ViewType.VIRTUAL)
     {
@@ -42,22 +34,7 @@ public class PortalManager : MonoBehaviour
         Portal p = newPortal.GetComponent<Portal>();
         p.Initialize(vType, player);
 
-        return p;// newPortal.GetComponent<Portal>();
-    }
-
-    /*
-     * Instantiate and initialize the Portal Prefabs
-     */
-    public Portal MakeCircPortal(Vector3 position, Vector3 forward, Vector3 up, Portal.ViewType vType = Portal.ViewType.VIRTUAL)
-    {
-        GameObject newPortal = objManager.InstantiateOwnedObject("CircularPortal") as GameObject;
-        newPortal.transform.position = position;
-        newPortal.transform.rotation = Quaternion.LookRotation(forward, up);
-
-        Portal p = newPortal.GetComponent<Portal>();
-        p.Initialize(vType, player);
-
-        return p;// newPortal.GetComponent<Portal>();
+        return p;
     }
 
     /*
@@ -73,7 +50,6 @@ public class PortalManager : MonoBehaviour
         Debug.Log("Requesting Portal Registration");
         RaiseEventOptions options = new RaiseEventOptions();
         options.Receivers = ReceiverGroup.MasterClient;
-
         
         //the data we're sending with the message (viewID of the portal)
         int viewID = portal.GetComponent<PhotonView>().viewID;
