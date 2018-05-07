@@ -168,7 +168,7 @@ public class Portal : MonoBehaviour
         renderQuad.GetComponent<MeshRenderer>().material = idleMat;
 
         // Destroy portal cam
-        Destroy(copyCamera);
+        //Destroy(copyCamera);
     }
 
     /*

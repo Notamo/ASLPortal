@@ -100,14 +100,14 @@ public class PlayerAvatar : MonoBehaviour {
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
                     Vector3 pos = mCursor.transform.position;
-                    controller.PlayerCreateCircPortal(pos, -mCursor.transform.forward, mCursor.transform.up);
+                    controller.PlayerCreatePortal(pos, -mCursor.transform.forward, mCursor.transform.up);
                 }
 
                 //Create webcam portal
                 if(Input.GetKeyDown(KeyCode.C))
                 {
                     Vector3 pos = mCursor.transform.position + 0.01f * mCursor.transform.up;
-                    controller.PlayerCreatePortal(pos, mCursor.transform.up, -mCursor.transform.forward, Portal.ViewType.PHYSICAL);
+                    controller.PlayerCreatePortal(pos, -mCursor.transform.forward, mCursor.transform.up, Portal.ViewType.PHYSICAL);
                 }
 
                 //Register Portal

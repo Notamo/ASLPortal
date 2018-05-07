@@ -129,13 +129,6 @@ public class MasterController : MonoBehaviour
         portalManager.MakePortal(position, forward, up, vType);
     }
 
-    //PlayerCreatePortal
-    //Try to create a portal where the player camera is looking at on the plane
-    public void PlayerCreateCircPortal(Vector3 position, Vector3 forward, Vector3 up, Portal.ViewType vType = Portal.ViewType.VIRTUAL)
-    {
-        portalManager.MakeCircPortal(position, forward, up, vType);
-    }
-
     //PlayerRegisterPortal
     //Try to register the portal with the PortalManager
     public void PlayerRegisterPortal(GameObject portalGO)
