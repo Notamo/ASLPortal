@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4543416973184562}
   - component: {fileID: 114706387694500306}
   m_Layer: 0
-  m_Name: Cursor
+  m_Name: PortalCursor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

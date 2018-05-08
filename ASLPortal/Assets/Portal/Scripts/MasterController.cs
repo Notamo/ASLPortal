@@ -22,7 +22,6 @@ public class MasterController : MonoBehaviour
     public string avatarName = "MasterAvatar";
     public Color avatarColor = Color.white;
     public Vector3 SpawnPosition = new Vector3(0, 1, 0);
-    public GameObject mCursorPrefab = null;
 
     //Worlds
     public List<string> worldPrefabs;
@@ -110,7 +109,7 @@ public class MasterController : MonoBehaviour
                                                     playerAvatar.GetComponent<PhotonView>().viewID,
                                                     SpawnPosition,
                                                     avatarColor);
-        avatarComponent.Initialize(avatarProperties, mainCamera, this, mCursorPrefab);
+        avatarComponent.Initialize(avatarProperties, mainCamera, this);
         portalManager.player = playerAvatar;
 
         //send a message off so it can be properly initialized
@@ -204,7 +203,7 @@ public class MasterController : MonoBehaviour
              return;
          }
 
-         newAvatar.Initialize(info, null, null, null);
+         newAvatar.Initialize(info, null, null);
     }
     #endregion
 }
