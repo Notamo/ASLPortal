@@ -9,6 +9,7 @@ public class PortalManager : MonoBehaviour
 {
     public bool MasterClient = true;                //for propagating events
     public GameObject player = null;                //to be set on avatar load
+    public GameObject portalCursor = null;          //set in scene to initialize a portal cursor
 
     private ObjectInteractionManager objManager;    //should always exist in ASL scene
     private Dictionary<int, Portal> portalSet;      //the set of all available portals
@@ -18,6 +19,7 @@ public class PortalManager : MonoBehaviour
     {
         objManager = GameObject.Find("ObjectInteractionManager").GetComponent<ObjectInteractionManager>();
         portalSet = new Dictionary<int, Portal>();
+        if (portalCursor != null) Instantiate(portalCursor, transform);
         PhotonNetwork.OnEventCall += OnEvent;
     }
 
