@@ -15,8 +15,6 @@ namespace UWBNetworkingPackage
         //WorldManager Events
         public const byte EV_WORLD_ADD = 30;    //add a world to the worldManager
         public const byte EV_WORLD_ADD_TO = 31;    //add an entity to one of the worlds
-        public const byte EV_MASTER_LOAD = 32;  //master just created worlds
-        public const byte EV_AVATAR_MAKE = 33;  //avatar created by a user
 
         //PortalManager Events
         public const byte EV_PORTAL_REG = 40;
@@ -24,8 +22,8 @@ namespace UWBNetworkingPackage
         public const byte EV_PORTAL_LINK = 42;
         public const byte EV_PORTAL_UNLINK = 43;
 
-        //Portal Event Master Client Responses
-        public const byte EV_PORTAL_ACK = 44;
-        public const byte EV_PORTAL_NCK = 45;
+        //PortalManager Test World Events
+        public const byte EV_MASTER_LOAD = 44;  //master just created worlds
+        public const byte EV_AVATAR_MAKE = 45;  //avatar created by a user
     }
 }
