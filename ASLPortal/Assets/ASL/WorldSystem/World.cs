@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * The primary World class
+ * This class manages all the 
+ * Each world contains one portal by default, 
+ * so we can travel to it from other worlds
+ */ 
 public class World : MonoBehaviour {
     public MasterController controller = null;
     public PortalManager portalManager = null;

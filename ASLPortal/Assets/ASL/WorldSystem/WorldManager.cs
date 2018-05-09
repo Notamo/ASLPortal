@@ -4,6 +4,12 @@ using UnityEngine;
 
 using ASL.Manipulation.Objects;
 
+/*
+ * WorldManager
+ * This class allows us to maintain a set of "worlds" that allow us to isolate
+ * sets of GameObjects from one another. From each world, we can set multiple
+ * origin points for each world.
+ */ 
 public class WorldManager : MonoBehaviour {
 
     public Dictionary<int, World> worlds;
@@ -52,7 +58,7 @@ public class WorldManager : MonoBehaviour {
     }
 
     //Create a new world by prefab name
-    //and add it
+    //and add it to the set/Dictionary
     public void CreateWorld(string prefabName)
     {
         Debug.Log("making world: " + prefabName);
@@ -91,7 +97,8 @@ public class WorldManager : MonoBehaviour {
 
         go.transform.parent = worlds[worldId].transform;
 
-        //send an event off
+        //send an event off, so other clients can add the same object to their instance
+        //of the world
         int[] pair = { worldId, view.viewID };
 
         RaiseEventOptions options = new RaiseEventOptions();

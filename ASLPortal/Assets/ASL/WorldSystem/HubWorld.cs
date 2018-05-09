@@ -2,6 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * HubWorld - Extends the base "World" class
+ * by addding a portalSelector. This allows us to cycle
+ * through other worlds and travel to them
+ * Note: Perhaps the name of this class should be changed, as
+ *  more than just hubs use this functionality
+ */ 
 public class HubWorld : World {
 
     public PortalSelector selector = null;
