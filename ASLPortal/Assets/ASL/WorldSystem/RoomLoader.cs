@@ -5,6 +5,15 @@ using System.IO;
 
 using UWBNetworkingPackage;
 
+/*
+ * RoomLoader - Contains functionality for loading in a
+ *      room, given a string that represents the room's
+ *      name. 
+ *      Note: This a stripped down copy of the
+ *      "RoomSave" class, as it is not integrated with
+ *      the editor, and does not need any functionality
+ *      besides loading in room geometry.
+ */ 
 public class RoomLoader : MonoBehaviour {
 
     public string RoomFolder = "";
