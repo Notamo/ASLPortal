@@ -9,7 +9,7 @@ using UnityEngine;
  * so we can travel to it from other worlds
  */ 
 public class World : MonoBehaviour {
-    public MasterController controller = null;
+    public UWBNetworkingPackage.NetworkManager network = null;
     public PortalManager portalManager = null;
     public WorldManager worldManager = null;
     public Transform defaultPortalXform = null;
@@ -18,7 +18,7 @@ public class World : MonoBehaviour {
 
     public virtual void Awake()
     {
-        controller = GameObject.Find("MasterController").GetComponent<MasterController>();
+        network = GameObject.Find("NetworkManager").GetComponent<UWBNetworkingPackage.NetworkManager>();
         portalManager = GameObject.Find("PortalManager").GetComponent<PortalManager>();
         worldManager = GameObject.Find("WorldManager").GetComponent<WorldManager>();
         Debug.Assert(defaultPortalXform != null);
@@ -28,7 +28,7 @@ public class World : MonoBehaviour {
 	// Use this for initialization
 	public virtual void Init () {
         //instantiate a portal as well if we are the master client
-        if(controller.masterClient &&
+        if(network.MasterClient &&
             PhotonNetwork.inRoom &&
            defaultPortalXform != null)
         {

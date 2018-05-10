@@ -199,6 +199,12 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 98047662}
+--- !u!114 &174940687 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114158316583345332, guid: f345ea6f09d280c428066c3708145fd8,
+    type: 2}
+  m_PrefabInternal: {fileID: 1505347640}
+  m_Script: {fileID: 11500000, guid: a8f7156ffd3f871409f85f47a4e44eb6, type: 3}
 --- !u!1 &187435579
 GameObject:
   m_ObjectHideFlags: 0
@@ -762,12 +768,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   masterClient: 0
   objManager: {fileID: 778688546}
-  portalManager: {fileID: 0}
+  portalManager: {fileID: 174940687}
   worldManager: {fileID: 1614087698}
   mainCamera: {fileID: 1277827226}
   playerAvatar: {fileID: 0}
-  avatarName: MasterAvatar
-  avatarColor: {r: 1, g: 1, b: 1, a: 1}
+  avatarName: ClientAvatar
+  avatarColor: {r: 1, g: 0, b: 0, a: 1}
   SpawnPosition: {x: 0, y: 1, z: 0}
   worldPrefabs: []
   linkPanel: {fileID: 98047664}
@@ -809,6 +815,11 @@ Prefab:
     - target: {fileID: 4237337175375488, guid: f345ea6f09d280c428066c3708145fd8, type: 2}
       propertyPath: m_RootOrder
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 114158316583345332, guid: f345ea6f09d280c428066c3708145fd8,
+        type: 2}
+      propertyPath: MasterClient
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f345ea6f09d280c428066c3708145fd8, type: 2}

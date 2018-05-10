@@ -27,9 +27,9 @@ public class PortalManager : MonoBehaviour
      * Instantiate and initialize a portal with:
      * position, orientation, view type
      */
-    public Portal MakePortal(Vector3 position, Vector3 forward, Vector3 up, Portal.ViewType vType = Portal.ViewType.VIRTUAL)
+    public Portal MakePortal(Vector3 position, Vector3 forward, Vector3 up, Portal.ViewType vType = Portal.ViewType.VIRTUAL, string portalPrefab = "Portal")
     {
-        GameObject newPortal = objManager.InstantiateOwnedObject("Portal") as GameObject;
+        GameObject newPortal = objManager.InstantiateOwnedObject(portalPrefab) as GameObject;
         newPortal.transform.position = position;
         newPortal.transform.rotation = Quaternion.LookRotation(forward, up);
 
@@ -350,17 +350,33 @@ public class PortalManager : MonoBehaviour
         return portalSet.ContainsKey(id);
     }
 
+    /*
+     * Get registered portal using it's ID
+     */
     public Portal GetPortal(int portalID)
     {
         return portalSet[portalID];
     }
 
-    public Dictionary<int, Portal>.KeyCollection GetPortalIDs(int portalID)
+    /*
+     * Get the portal that the portal cursor is touching
+     */
+    public Portal GetPortal()
+    {
+        if (portalCursor != null)
+        {
+            GameObject portal = portalCursor.GetComponent<PortalCursor>().GetPortal();
+            return portal.GetComponent<Portal>();
+        }
+        return null;
+    }
+
+    public Dictionary<int, Portal>.KeyCollection GetPortalIDs()
     {
         return portalSet.Keys;
     }
 
-    public int GetNextPortalId(int portalID)
+    internal int GetNextPortalId(int portalID)
     {
         IEnumerable<int> keys = portalSet.Keys;
         

@@ -11,10 +11,9 @@ public class PortalSelector : MonoBehaviour {
 
     private int sourcePortalID = -1;
     private int destPortalID = -1;
-    private bool initialized = false;
 
     // Use for instantiation
-    private void Awake()
+    void Awake()
     {
         portalManager = GameObject.Find("PortalManager").GetComponent<PortalManager>();
         Debug.Assert(portalManager != null);

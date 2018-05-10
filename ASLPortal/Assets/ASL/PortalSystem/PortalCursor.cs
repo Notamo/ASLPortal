@@ -9,7 +9,7 @@ public class PortalCursor : MonoBehaviour
     private PortalManager mPortalManager = null;    //for making, linking portals
 
     // Use this for initialization
-    private void Start()
+    void Start()
     {
         // Get Portal Manager ref
         mPortalManager = GetComponentInParent<PortalManager>();
@@ -27,7 +27,7 @@ public class PortalCursor : MonoBehaviour
     }
 
     // Update is called once per frame
-    private void Update()
+    void Update()
     {
         PlayerPortalControls();
     }
@@ -35,7 +35,7 @@ public class PortalCursor : MonoBehaviour
     /*
      * Hide/show the cursor, disabling/enabling it
      */
-    public void HideCursor(bool hide)
+    private void HideCursor(bool hide)
     {
         foreach (MeshRenderer mesh in meshRenderers)
         {
@@ -47,21 +47,24 @@ public class PortalCursor : MonoBehaviour
     /*
      * Get the portal this cursor touches, if touching portal
      */
-    public GameObject GetPortal()
+    internal GameObject GetPortal()
     {
-        // Do a raycast based on head position and orientation.
-        var headPosition = Camera.main.transform.position;
-        var gazeDirection = Camera.main.transform.forward;
-        RaycastHit hitInfo;
-        if (Physics.Raycast(headPosition, gazeDirection, out hitInfo))
+        if (!hiding)
         {
-            // Check for portal on collision
-            if (hitInfo.collider.gameObject != null)
+            // Do a raycast based on head position and orientation.
+            var headPosition = Camera.main.transform.position;
+            var gazeDirection = Camera.main.transform.forward;
+            RaycastHit hitInfo;
+            if (Physics.Raycast(headPosition, gazeDirection, out hitInfo))
             {
-                if (hitInfo.collider.gameObject.name.Contains("Portal"))
-                    return hitInfo.collider.gameObject;
-                else if (hitInfo.collider.transform.parent.name.Contains("Portal"))
-                    return hitInfo.collider.transform.parent.gameObject;
+                // Check for portal on collision
+                if (hitInfo.collider.gameObject != null)
+                {
+                    if (hitInfo.collider.gameObject.name.Contains("Portal"))
+                        return hitInfo.collider.gameObject;
+                    else if (hitInfo.collider.transform.parent.name.Contains("Portal"))
+                        return hitInfo.collider.transform.parent.gameObject;
+                }
             }
         }
         return null;
@@ -129,7 +132,7 @@ public class PortalCursor : MonoBehaviour
      * U - Link source to destination portal
      * X - Unlink portal
      */
-    private void PlayerPortalControls()
+    protected virtual void PlayerPortalControls()
     {
         // Toggle cursor and controls
         if (Input.GetKeyDown(KeyCode.P))
@@ -146,7 +149,7 @@ public class PortalCursor : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 Vector3 pos = transform.position;
-                mPortalManager.MakePortal(pos, -transform.forward, transform.up);
+                mPortalManager.MakePortal(pos, -transform.forward, transform.up, Portal.ViewType.VIRTUAL, "CircularPortal");
             }
 
             //Create webcam portal

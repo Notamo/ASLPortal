@@ -25,10 +25,11 @@ public class Portal : MonoBehaviour
     public Material copyCamMat = null;          //material for using a portal cam
     public Material webCamMat = null;           //material for using a webcam
     private WebCamTexture webCamTexture = null; //texure for using a webcam
+    private string preferredWebCam = "";        //name of device used for hybrid/physical viewing
 
     #region INITIALIZATION
     // Use this for initialization
-    public void Start()
+    void Start()
     {
         Debug.Assert(copyCameraPrefab != null);
         Debug.Assert(renderQuad != null);
@@ -60,16 +61,47 @@ public class Portal : MonoBehaviour
         }
 
         if (user != null)
-            userCamera = user.GetComponent<PlayerAvatar>().userCamera;
+            userCamera = user.GetComponentInChildren<Camera>();
 
         //set up the copy camera
+        InitCopyCam();
+    }
+
+    public void SetViewType(ViewType viewType)
+    {
+        // Set view type and initialize accordingly 
+        this.viewType = viewType;
+        switch (viewType)
+        {
+            case ViewType.VIRTUAL:
+                break;
+            case ViewType.PHYSICAL:
+            case ViewType.HYBRID:
+                InitWebCam();       //need to query user for preferred device name
+                break;
+            default:
+                Debug.LogError("Error: Cannot Initialize portal. Invalid ViewType for initialization!");
+                return;
+        }
+    }
+
+    public void SetViewDeviceName(string deviceName)
+    {
+        preferredWebCam = deviceName;
+    }
+
+    public void SetUser(GameObject user)
+    {
+        if (user != null)
+            userCamera = user.GetComponentInChildren<Camera>();
+
         InitCopyCam();
     }
 
     /*
      * Initialize webcam to preferred device
      */
-    private void InitWebCam(string preferredWebCam = "")
+    private void InitWebCam()
     {
         // Get all potential webcams, check if any exist
         WebCamDevice[] devices = WebCamTexture.devices;
@@ -105,7 +137,7 @@ public class Portal : MonoBehaviour
      */
     private void InitCopyCam()
     {
-        // If no user, try to use main camera
+        // If no user cam, try to use main camera
         if (userCamera == null)
             userCamera = Camera.main;
 
@@ -125,7 +157,7 @@ public class Portal : MonoBehaviour
      * Try linking this portal to a destination portal
      * depending on destination portal's type
      */
-    public void LinkDestination(Portal other)
+    internal void LinkDestination(Portal other)
     {
         Debug.Log("Linking to Portal with ViewType: " + other.viewType);
 
@@ -159,7 +191,7 @@ public class Portal : MonoBehaviour
     /*
      * Remove link to destination portal
      */
-    public void Close()
+    internal void Close()
     {
         // Unlink from dest portal
         destinationPortal = null;
@@ -229,7 +261,7 @@ public class Portal : MonoBehaviour
      * 3. the object is on the front side of the source portal
      * 4. the object is moving towards the portal
      */
-    public void TeleportObject(GameObject go)
+    private void TeleportObject(GameObject go)
     {
         Debug.Log("teleportObject! [" + go.name + "]");
         Debug.Log("Source: " + GetComponent<PhotonView>().viewID.ToString());
@@ -285,7 +317,7 @@ public class Portal : MonoBehaviour
     /*
      * Prepare a gameobject for teleportation to the destination portal
      */
-    public void TeleportEnter(GameObject go)
+    private void TeleportEnter(GameObject go)
     {
         // Create world to local, flipped around portal transformation
         Matrix4x4 destinationFlipRotation = Matrix4x4.TRS(Vector3.zero, Quaternion.AngleAxis(180.0f, Vector3.up), Vector3.one);
@@ -306,7 +338,7 @@ public class Portal : MonoBehaviour
     /*
      * Transform gameobject into destination portal space
      */
-    public void TeleportExit(GameObject go,
+    private void TeleportExit(GameObject go,
                             Vector3 relativePosition,
                             Quaternion relativeRotation,
                             Vector3 relativeVelocity)
