@@ -5,15 +5,13 @@ using System.IO;
 
 using UWBNetworkingPackage;
 
-/*
- * RoomLoader - Contains functionality for loading in a
- *      room, given a string that represents the room's
- *      name. 
- *      Note: This a stripped down copy of the
- *      "RoomSave" class, as it is not integrated with
- *      the editor, and does not need any functionality
- *      besides loading in room geometry.
- */ 
+ /// <summary>
+ /// The RoomLoader class contains fuctionality for loading in a room,
+ /// given a string that represents the room name. 
+ /// Note: This a stripped-down copy of the "RoomSave" class, as it is
+ /// not integrated with the Unity editor, and does not need any functionality
+ /// besides loading in room geometry.
+ /// </summary>
 public class RoomLoader : MonoBehaviour {
 
     public string RoomFolder = "";
@@ -43,6 +41,7 @@ public class RoomLoader : MonoBehaviour {
         public string filePath;
         public string name;
     }
+
     // Use this for initialization
     void Awake () {
         SetRoot();
@@ -59,6 +58,12 @@ public class RoomLoader : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Loads a room in determined by the roomName parameter, as a child
+    /// of the given transform
+    /// </summary>
+    /// <param name="roomName">The name of the room to be loaded</param>
+    /// <param name="parent">The parent of the room to be loaded</param>
     public void LoadRoom(string roomName, Transform parent)
     {
         this.parent = parent;
@@ -70,6 +75,10 @@ public class RoomLoader : MonoBehaviour {
         UnityEngine.Debug.Log(FilesToLoad.Count + " room files");
     }
 
+    /// <summary>
+    /// Loads mesh names for the room into the "FilesToLoad" Stack
+    /// </summary>
+    /// <param name="Dir">The directory the meshes reside in</param>
     private void LoadRoomDI(DirectoryInfo Dir)
     {
         foreach (FileInfo f in Dir.GetFiles())
@@ -99,6 +108,10 @@ public class RoomLoader : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Set the root Directory
+    /// </summary>
+    /// <returns>The root directory</returns>
     private DirectoryInfo SetRoot()
     {
 #if UNITY_EDITOR

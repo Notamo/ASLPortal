@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using ASL.PortalSystem;
+using ASL.WorldSystem;
 
-/*
- * The primary World class
- * This class manages all the 
- * Each world contains one portal by default, 
- * so we can travel to it from other worlds
- */ 
+ /// <summary>
+ /// The primary World class. Each world contains one portal by default, so we
+ /// can travel to it from other worlds.
+ /// </summary>
 public class World : MonoBehaviour {
     public UWBNetworkingPackage.NetworkManager network = null;
     public PortalManager portalManager = null;
@@ -26,7 +25,12 @@ public class World : MonoBehaviour {
         Debug.Assert(portalManager != null);
         Debug.Assert(worldManager != null);
     }
+
 	// Use this for initialization
+    /// <summary>
+    /// Initialize the World. It creates and registers a new portal with the
+    /// portal manager, and adds it as a child in the world manager.
+    /// </summary>
 	public virtual void Init () {
         //instantiate a portal as well if we are the master client
         if(network.MasterClient &&
