@@ -4349,7 +4349,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1150629819739892}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -3, y: -0.5, z: 8.8}
+  m_LocalPosition: {x: -2.1, y: -1, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4538616065589148}
@@ -4387,16 +4387,16 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1190373187520564}
-  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 25.14455, y: 2.451489, z: 0.56300646}
-  m_LocalScale: {x: 1.0000005, y: 1, z: 1.0000005}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4531119245600226}
   - {fileID: 4021880050255122}
   - {fileID: 4916113157782562}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4543939714529202
 Transform:
   m_ObjectHideFlags: 1
@@ -12679,7 +12679,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cc860b7e0f6e2e4eb6fa39871b4361f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RoomFolder: \ASL\Resources\Rooms\UW1_260
+  RoomFolder: \ASL\Resources\Rooms\UW1_260M
   parent: {fileID: 0}
 --- !u!114 &114097492317202832
 MonoBehaviour:
@@ -12945,7 +12945,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23965dbefd249b749ac1996036dc0008, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 0}
+  network: {fileID: 0}
   portalManager: {fileID: 0}
   worldManager: {fileID: 0}
   defaultPortalXform: {fileID: 4531119245600226}
@@ -12953,7 +12953,7 @@ MonoBehaviour:
   defaultPortalViewType: 3
   selector: {fileID: 114288207543032264}
   roomLoader: {fileID: 0}
-  roomName: UW1_260
+  roomName: UW1_260M
   roomOrigin: {fileID: 4916113157782562}
 --- !u!114 &114218978368184410
 MonoBehaviour:
@@ -13230,9 +13230,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   button: {fileID: 1519520425032400}
-  sourcePortal: {fileID: 0}
-  playerCam: {fileID: 0}
-  portalManager: {fileID: 0}
 --- !u!114 &114297390406779522
 MonoBehaviour:
   m_ObjectHideFlags: 1
