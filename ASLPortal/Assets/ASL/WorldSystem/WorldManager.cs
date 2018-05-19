@@ -4,6 +4,10 @@ using UnityEngine;
 
 using ASL.Manipulation.Objects;
 
+/// <summary>
+/// Contains all classes that define the behavior involved in instantiating
+/// and managing "Worlds" in ASL
+/// </summary>
 namespace ASL.WorldSystem
 {
     /// <summary>
