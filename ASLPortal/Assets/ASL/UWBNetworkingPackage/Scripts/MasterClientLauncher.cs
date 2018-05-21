@@ -79,8 +79,9 @@ namespace UWBNetworkingPackage
                             obj1.tag = "Room";
                             obj1.AddComponent<TangoRoom>();
 
-                            Transform parentXform = PhotonView.Find(T.parentID).transform;
-                            obj1.transform.SetParent(parentXform, false);
+                            PhotonView parentView = PhotonView.Find(T.parentID);
+                            if(parentView != null)
+                                obj1.transform.SetParent(parentView.transform, false);
                         }
                     }
                 }
