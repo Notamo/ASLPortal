@@ -12,7 +12,7 @@ using UnityEngine;
  /// The RoomWorld class contains functionality for loading rooms and streaming
  /// them to other clients.
  /// </summary>
-public class RoomWorld : HubWorld {
+public class RoomWorld : PortalWorld {
 
     /// <summary>
     /// A reference to the a roomLoader helper class for loading and streaming
@@ -39,7 +39,7 @@ public class RoomWorld : HubWorld {
     }
 
     /// <summary>
-    /// Initializes The RoomWorld. Begins by calling the base (HubWorld)
+    /// Initializes The RoomWorld. Begins by calling the base (PortalWorld)
     /// Init method, then continues by telling the RoomLoader to load
     /// the room determined by "roomName" in.
     /// </summary>

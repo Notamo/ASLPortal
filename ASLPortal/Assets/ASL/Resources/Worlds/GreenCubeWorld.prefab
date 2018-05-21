@@ -55,7 +55,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4865842007740530}
-  - component: {fileID: 114104815819345286}
+  - component: {fileID: 114488047736247400}
   m_Layer: 0
   m_Name: GreenCubeWorld
   m_TagString: Untagged
@@ -433,7 +433,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114104815819345286
+--- !u!114 &114488047736247400
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -441,12 +441,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1414279324223486}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62b0d5a0f2631e749883918899181708, type: 3}
+  m_Script: {fileID: 11500000, guid: 15b0a1d73f8e7fb40942a5a983dd35c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 0}
-  portalManager: {fileID: 0}
+  network: {fileID: 0}
   worldManager: {fileID: 0}
+  portalManager: {fileID: 0}
   defaultPortalXform: {fileID: 4205778967348498}
   defaultPortal: {fileID: 0}
   defaultPortalViewType: 1
@@ -463,6 +463,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   button: {fileID: 1891115365326440}
-  sourcePortal: {fileID: 0}
-  playerCam: {fileID: 0}
-  portalManager: {fileID: 0}

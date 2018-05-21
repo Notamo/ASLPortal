@@ -71,7 +71,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4951899679286880}
-  - component: {fileID: 114571318425477952}
+  - component: {fileID: 114456587403862400}
   m_Layer: 0
   m_Name: BlueCubeWorld
   m_TagString: Untagged
@@ -445,10 +445,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   button: {fileID: 1595018465797444}
-  sourcePortal: {fileID: 0}
-  playerCam: {fileID: 0}
-  portalManager: {fileID: 0}
---- !u!114 &114571318425477952
+--- !u!114 &114456587403862400
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -456,12 +453,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1574699177389124}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62b0d5a0f2631e749883918899181708, type: 3}
+  m_Script: {fileID: 11500000, guid: 15b0a1d73f8e7fb40942a5a983dd35c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 0}
-  portalManager: {fileID: 0}
+  network: {fileID: 0}
   worldManager: {fileID: 0}
+  portalManager: {fileID: 0}
   defaultPortalXform: {fileID: 4621103324318592}
   defaultPortal: {fileID: 0}
   defaultPortalViewType: 1
