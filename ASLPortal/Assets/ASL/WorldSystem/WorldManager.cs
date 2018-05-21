@@ -33,7 +33,7 @@ namespace ASL.WorldSystem
         /// <summary>
         /// The number of worlds currently loaded
         /// </summary>
-        public int numWorlds = 0;
+        private int numWorlds = 0;
 
         private ObjectInteractionManager objManager;
 
