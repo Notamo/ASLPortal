@@ -138,8 +138,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 585487943e62fd841987d4d1a702dea8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  masterClient: 0
-  numWorlds: 0
+  masterClient: 1
 --- !u!114 &114933201357081878
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -153,3 +152,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MasterClient: 0
   player: {fileID: 0}
+  portalCursor: {fileID: 0}

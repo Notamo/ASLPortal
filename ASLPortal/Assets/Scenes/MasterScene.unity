@@ -413,7 +413,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   masterClient: 1
-  numWorlds: 0
 --- !u!4 &544202707
 Transform:
   m_ObjectHideFlags: 0
@@ -514,15 +513,15 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4955114873074062, guid: ab49d762ed2b96843811cf966a0b7279, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 28.630135
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4955114873074062, guid: ab49d762ed2b96843811cf966a0b7279, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 86.37049
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4955114873074062, guid: ab49d762ed2b96843811cf966a0b7279, type: 2}
       propertyPath: m_LocalPosition.z
-      value: -0.9375
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4955114873074062, guid: ab49d762ed2b96843811cf966a0b7279, type: 2}
       propertyPath: m_LocalRotation.x

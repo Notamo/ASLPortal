@@ -68,7 +68,7 @@ public class MasterController : MonoBehaviour
                     worldManager.FindWorlds();
                 }
 
-                World world = worldManager.getWorldByName("HubWorld");
+                World world = worldManager.getWorldByName("PortalWorld");
                 if (world != null)
                 {
                     worldManager.AddToWorld(world, playerAvatar);
@@ -80,7 +80,7 @@ public class MasterController : MonoBehaviour
             else if (playerAvatar == null && PhotonNetwork.inRoom)
             {
                 MakeAvatar();
-                World world = worldManager.getWorldByName("HubWorld");
+                World world = worldManager.getWorldByName("PortalWorld");
                 if (world != null)
                 {
                     worldManager.AddToWorld(world, playerAvatar);
@@ -169,7 +169,7 @@ public class MasterController : MonoBehaviour
 
             if (playerAvatar != null)
             {
-                World world = worldManager.getWorldByName("HubWorld");
+                World world = worldManager.getWorldByName("PortalWorld");
                 if (world != null)
                 {
                     worldManager.AddToWorld(world, playerAvatar);
