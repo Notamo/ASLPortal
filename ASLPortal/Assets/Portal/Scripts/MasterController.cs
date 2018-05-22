@@ -28,9 +28,6 @@ public class MasterController : MonoBehaviour
     //Worlds
     public List<string> worldPrefabs;
 
-    //UI
-    public SourceDestPanel linkPanel = null;
-
     //Setup State
     private bool setupComplete = false;
 
