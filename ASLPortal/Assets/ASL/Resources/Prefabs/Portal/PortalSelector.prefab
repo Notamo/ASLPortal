@@ -218,6 +218,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   button: {fileID: 1843887467482216}
-  sourcePortal: {fileID: 0}
-  playerCam: {fileID: 0}
-  portalManager: {fileID: 0}

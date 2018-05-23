@@ -466,8 +466,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b932b64d9f95d7749aa0d2340bde3efd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  userCamera: {fileID: 0}
-  destinationPortal: {fileID: 0}
+  viewType: 1
   renderQuad: {fileID: 1530876642372846}
   copyCameraPrefab: {fileID: 1092014541888906, guid: ad471d676a49b4d499487d368601afe1,
     type: 2}
